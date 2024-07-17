@@ -3,7 +3,7 @@ hexRadius = hexHeight / 1.7320508;
 trayDepth = 20;
 floorDepth = 1;
 cutoutWidth = hexHeight * 0.35;
-wallThickness = 0.4;
+wallThickness = 0.6;
 
 module hexgrid(nc,nr,bottomCutout,halfRow) {
     for (row=[0:nr-1]) {
@@ -45,9 +45,9 @@ module playerTray() {
     numLanes = 1;
     gutter = (trayWidth - (chitSize * numLanes)) / (numLanes+1);
     chitThickness = 1.9;
-    step = chitThickness * 3;
+    step = chitThickness * 2;
     pegSize = 2;
-    sepDepth = 1;
+    sepDepth = 1.6;
 
     module lane(col) {
         size = trayHeight - gutter - gutter;
@@ -91,10 +91,26 @@ module playerTray() {
     }
 } */
 
+module separator(list) {
+    cols = floor(sqrt(len(list)));
+    cellSize = chitSize * 1.5;
+    for (i=[0:len(list)-1]) {
+        translate([(i % cols) * cellSize,floor(i / cols) * cellSize,0]) {
+            cube([chitSize + 1.8,chitSize,0.6]);
+            translate([chitSize/2 + 0.9,chitSize - 0.4,0.6]) {
+                linear_extrude(0.6) {
+                    text(text=list[i],size=len(list[i])>5?4:5,halign="center",valign="top");
+                }
+            }
+        }
+    }
+}
+
 
 // hexgrid(4,3,true,false);
 // hexgrid(4,3,true,true);
 playerTray();
+//separator(["Base","BB","Sc","MS","Colony","Raider","Unique","SY","Titan"]);
 // wedge(1);
         
             
