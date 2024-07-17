@@ -36,47 +36,65 @@ module hexgrid(nc,nr,bottomCutout,halfRow) {
     }
 }
 
+chitSize = 17;
+
 module playerTray() {
     // 140mm x 92mm is one quarter the folded game board
-    trayWidth = 150;
+    trayWidth = 22; // Was 150
     trayHeight = 95;
-    chitSize = 17; // actually 16
-    numLanes = 8;
-    gutter = (trayWidth - (chitSize * (numLanes-1))) / numLanes;
+    numLanes = 1;
+    gutter = (trayWidth - (chitSize * numLanes)) / (numLanes+1);
     chitThickness = 1.9;
-    step = chitThickness * 4;
+    step = chitThickness * 3;
     pegSize = 2;
+    sepDepth = 1;
 
     module lane(col) {
         size = trayHeight - gutter - gutter;
+        M = [ [ 1  , 0  , 0  , -sepDepth   ],
+              [ 0  , 1  , 0.7, 0   ],  // The "0.7" is the skew value; pushed along the y axis as z changes.
+              [ 0  , 0  , 1  , 0.8   ],
+              [ 0  , 0  , 0  , 1   ] ] ;
         translate([col * (chitSize + gutter) + gutter,gutter,floorDepth]) {
             cube([chitSize,size,chitSize]);
-            for (n=[0:step:size]) {
-                translate([0,n,-0.4]) cube([chitSize,chitThickness,chitSize]);
-                translate([(chitSize-pegSize)/2,n+step/2+chitThickness/2,-floorDepth*2]) cube([pegSize,pegSize,floorDepth*4]);
+            for (n=[0:step:size-step]) {
+                translate([0,n,-0.4]) {
+                    cube([chitSize,chitThickness/2,chitSize]);
+                }
+            }
+            for (n=[0:step:size-step]) {
+                translate([0,n,0.4]) {
+                    multmatrix(M) {
+                        cube([chitSize + sepDepth*2,chitThickness/2,chitSize]);
+                    }
+                }
             }
         }
     }
 
     difference() {
-        cube([trayWidth,trayHeight,chitSize * 0.7071 + floorDepth]);
+        cube([trayWidth,trayHeight,chitSize * 0.5 + floorDepth]);
         for (l=[0:numLanes-1])
             lane(l);
     }
-    
-    translate([trayWidth + 10,0,0]) {
-        sizeX = chitSize * 0.7071;
-        sizeY = chitSize * 0.7071;
-        linear_extrude(chitSize - 0.5) {
-            polygon([[0,0], [sizeX,0], [sizeX,sizeY]]);
-        }
-        translate([sizeX/2,-0.6,chitSize/2]) cube([pegSize/2.1,1,pegSize/2.1],true);
-    }
 }
 
+/* module wedge(num) {
+    step = chitSize;
+    sizeX = chitSize * cos(60);
+    sizeY = chitSize * sin(60);
+    for (i=[0:step:num*step]) for (j=[0:step:num*step])
+        translate([i,j,0]) {
+        linear_extrude(chitSize-0.2) {
+            polygon([[0,0], [sizeX,0], [sizeX,sizeY]]);
+        }
+    }
+} */
 
-hexgrid(4,3,true,false);
+
+// hexgrid(4,3,true,false);
 // hexgrid(4,3,true,true);
-// playerTray();
+playerTray();
+// wedge(1);
         
             
