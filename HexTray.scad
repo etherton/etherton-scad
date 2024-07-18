@@ -2,7 +2,7 @@ hexHeight = 50;
 hexRadius = hexHeight / 1.7320508;
 trayDepth = 20;
 floorDepth = 1;
-cutoutWidth = hexHeight * 0.35;
+cutoutWidth = hexHeight * 0.25;
 wallThickness = 0.6;
 
 module hexgrid(nc,nr,bottomCutout,halfRow) {
@@ -18,7 +18,7 @@ module hexgrid(nc,nr,bottomCutout,halfRow) {
                     }
                     for (r=[0:120:240]) {
                         rotate([0,0,r]) {
-                            translate([0,0,floorDepth+cutoutWidth]) {
+                            translate([0,0,floorDepth+cutoutWidth/2+trayDepth/2]) {
                                 cube([cutoutWidth,hexRadius*2,trayDepth],true);
                             }
                         translate([0,0,floorDepth+cutoutWidth/2]) {
@@ -47,7 +47,7 @@ module playerTray() {
     chitThickness = 1.9;
     step = chitThickness * 2;
     pegSize = 2;
-    sepDepth = 1.6;
+    sepDepth = 1.3;
 
     module lane(col) {
         size = trayHeight - gutter - gutter;
@@ -62,7 +62,7 @@ module playerTray() {
                     cube([chitSize,chitThickness/2,chitSize]);
                 }
             }
-            for (n=[0:step:size-step]) {
+            for (n=[0:step*2:size-step]) {
                 translate([0,n,0.4]) {
                     multmatrix(M) {
                         cube([chitSize + sepDepth*2,chitThickness/2,chitSize]);
@@ -91,12 +91,15 @@ module playerTray() {
     }
 } */
 
-module separator(list) {
+module divider(list) {
     cols = floor(sqrt(len(list)));
     cellSize = chitSize * 1.5;
     for (i=[0:len(list)-1]) {
         translate([(i % cols) * cellSize,floor(i / cols) * cellSize,0]) {
-            cube([chitSize + 1.8,chitSize,0.6]);
+            intersection() {
+                cube([chitSize + 1.9,chitSize,0.6]);
+                translate([chitSize/2 + 1.9/2,chitSize/2 + 1.9/2,0]) { cylinder(h=0.6,d=chitSize / 0.7071 + 0.1); };
+            }
             translate([chitSize/2 + 0.9,chitSize - 0.4,0.6]) {
                 linear_extrude(0.6) {
                     text(text=list[i],size=len(list[i])>5?4:5,halign="center",valign="top");
@@ -107,10 +110,15 @@ module separator(list) {
 }
 
 
-// hexgrid(4,3,true,false);
+hexgrid(4,3,true,false);
 // hexgrid(4,3,true,true);
-playerTray();
-//separator(["Base","BB","Sc","MS","Colony","Raider","Unique","SY","Titan"]);
+// playerTray();
+/*divider(
+    ["Ba","BB","BC","BD","BV","CA",
+     "Col","CV","DD","De","DN","F",
+     "MSP","Mi","R","SC","SW","SY",
+     "T","Ti","U","Fl","Mnr","Gr",
+     "HI","Inf","Mar","Res","Hom"]);*/
 // wedge(1);
         
             
