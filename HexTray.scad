@@ -38,18 +38,18 @@ module hexgrid(nc,nr,bottomCutout,halfRow) {
 
 chitSize = 17;
 
-module playerTray() {
+module playerTray(doLid) {
     // 140mm x 92mm is one quarter the folded game board
     trayWidth = 150; // Was 150
     trayHeight = 95; // Was 95;
-    numLanes = 8;
+    numLanes = 7;
     gutter = (trayWidth - (chitSize * numLanes)) / (numLanes+1);
     chitThickness = 1.9;
-    step = chitThickness * 2;
+    step = chitThickness * 1.89; // fudge factor to get it far from back
     pegSize = 2;
     sepDepth = 1.3;
     notchDepth = 1;
-    notchWidth = 10;
+    notchWidth = 10.6;
     //echo(gutter);
 
     module lane(col) {
@@ -60,12 +60,12 @@ module playerTray() {
               [ 0  , 0  , 0  , 1   ] ] ;
         translate([col * (chitSize + gutter) + gutter,gutter,floorDepth]) {
             cube([chitSize,size,chitSize]);
-            for (n=[0:step:size-step]) {
+            for (n=[0:step:size-step*2]) {
                 translate([0,n,-0.4]) {
                     cube([chitSize,chitThickness/2,chitSize]);
                 }
             }
-            for (n=[0:step*2:size-step]) {
+            for (n=[0:step:size-step*2]) {
                 translate([0,n,0.4]) {
                     multmatrix(M) {
                         cube([chitSize + sepDepth*2,chitThickness/2,chitSize]);
@@ -95,25 +95,27 @@ module playerTray() {
     }
     
     // lid
-    lidDepth = 8;
-    claspDepth = 1;
-    translate([0,trayHeight + 10,0]) {
-        difference() {
-            cube([trayWidth,trayHeight,lidDepth]);
-            translate([gutter,gutter,floorDepth]) {
-                cube([trayWidth-gutter*2,trayHeight-gutter*2,lidDepth+1]);
+    if (doLid) {
+        lidDepth = 8;
+        claspDepth = 1;
+        translate([0,trayHeight + 10,0]) {
+            difference() {
+                cube([trayWidth,trayHeight,lidDepth]);
+                translate([gutter,gutter,floorDepth]) {
+                    cube([trayWidth-gutter*2,trayHeight-gutter*2,lidDepth+1]);
+                }
             }
-        }
-        translate([trayWidth/2-notchWidth/2,-claspDepth,0]) {
-            cube([notchWidth,claspDepth,lidDepth+trayDepth]);
-            translate([0,claspDepth,lidDepth+trayDepth-(notchDepth-0.2)]) {
-                cube([notchWidth,notchDepth,notchDepth-0.2]);
+            translate([trayWidth/2-notchWidth/2,-claspDepth,0]) {
+                cube([notchWidth,claspDepth,lidDepth+trayDepth]);
+                translate([0,claspDepth,lidDepth+trayDepth-(notchDepth-0.2)]) {
+                    cube([notchWidth,notchDepth,notchDepth-0.2]);
+                }
             }
-        }
-        translate([trayWidth/2-notchWidth/2,trayHeight,0]) {
-            cube([notchWidth,claspDepth,lidDepth+trayDepth]);
-            translate([0,-claspDepth,lidDepth+trayDepth-(notchDepth-0.2)]) {
-                cube([notchWidth,notchDepth,notchDepth-0.2]);
+            translate([trayWidth/2-notchWidth/2,trayHeight,0]) {
+                cube([notchWidth,claspDepth,lidDepth+trayDepth]);
+                translate([0,-claspDepth,lidDepth+trayDepth-(notchDepth-0.2)]) {
+                    cube([notchWidth,notchDepth,notchDepth-0.2]);
+                }
             }
         }
     }
@@ -141,10 +143,27 @@ module divider(list) {
     }
 }
 
+module divider2() {
+    depth = 2.4;
+    for (i=[0:4]) {
+        for (j=[0:4]) {
+            translate([chitSize * 1.5 * i,chitSize * 1.5 * j,0]) {
+                cube([chitSize+1.9,chitSize*0.75,0.6]);
+                translate([1.9/2,chitSize/2,0.6]) {
+                    cube([chitSize,chitSize/4,depth]);
+                    translate([-1.9/2,0,depth]) {
+                        cube([chitSize+1.9,chitSize/4,0.6]);
+                    }
+                }
+            }
+        }
+    }
+}
+
 
 // hexgrid(4,3,true,false);
 // hexgrid(4,3,true,true);
-playerTray();
+//playerTray();
 /*divider(
     ["Ba","BB","BC","BD","BV","CA",
      "Col","CV","DD","De","DN","F",
@@ -152,5 +171,5 @@ playerTray();
      "T","Ti","U","Fl","Mnr","Gr",
      "HI","Inf","Mar","Res","Hom"]);*/
 
-        
+divider2();
             
