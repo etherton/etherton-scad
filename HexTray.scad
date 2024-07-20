@@ -127,13 +127,13 @@ module playerTray(doLid) {
 module divider(list) {
     cols = ceil(sqrt(len(list)));
     for (i=[0:len(list)-1]) {
-        translate([(i % cols) * chitSize * 1.5,floor(i / cols) * chitSize * 0.75,0]) {
+        translate([(i % cols) * chitSize * 1.5,floor(i / cols) * chitSize,0]) {
             difference() {
                 union() {
-                    cube([chitSize + 1.9,10.0,0.6]);
-                    translate([1.9/2,2,0.6]) cube([chitSize,6,2.4]);
+                    cube([chitSize + 1.9,15.0,0.6]);
+                    translate([1.9/2,7,0.6]) cube([chitSize,6,2.2]);
                 }
-                translate([(chitSize + 1.9)/2,5,-1]) scale([-1,1,1]) linear_extrude(2) {
+                translate([(chitSize + 1.9)/2,11,-1]) scale([-1,1,1]) linear_extrude(2) {
                     text(text=list[i],size=4,halign="center",valign="center");
                 }
             }
@@ -163,17 +163,17 @@ module divider(list) {
 // hexgrid(4,3,true,true);
 //playerTray();
 divider(
-    ["Base","BB","BC","BD","BV","CA",
+    ["Base","BB","BC","BD","BV","CA" /*,
      "Colony","CV","DD","Decoy","DN","F",
      "MSP","Mines","R","SC","SW","SY",
      "T","Titan","Uniq","Flag","Miner","Grav",
      "HI","Inf","Mar","Res","Home","Fleet",
-     "DS","SB","Cy","Sup","Temp","MB"]);
+     "DS","SB","Cy","Sup","Temp","MB" */]);
 
-translate([0,80,0])
+// translate([0,80,0])
 // Replicators
-divider(["0","II","IV","V","VII","IX","XI", "XIII", "XV",
-   "Flag","Exp","Scan","SW","PD","Home","Colony","Fleet"]);
+/* divider(["0","II","IV","V","VII","IX","XI", "XIII", "XV",
+   "Flag","Exp","Scan","SW","PD","Home","Colony","Fleet"]); */
 
 //divider2();
             
