@@ -79,7 +79,7 @@ module playerTray(doLid) {
     lidInset = .8;
     lidInset2 = 1.2;
     lidOverlap = 5;
-    difference() {
+    /*difference() {
         cube([trayWidth,trayHeight,trayDepth]);
         for (l=[0:numLanes-1])
             lane(l);
@@ -92,12 +92,12 @@ module playerTray(doLid) {
         translate([trayWidth-lidInset,0,trayDepth-lidOverlap]) 
             cube([lidInset,trayHeight,lidOverlap]);
 
-    }
+    }*/
     
     // lid
     if (doLid) {
-        lidDepth = lidOverlap + 5;
-        lidInset3 = lidInset - 0.2; // Don't make the lid too tight
+        lidDepth = lidOverlap + 6.6;
+        lidInset3 = lidInset - 0.08; // Don't make the lid too tight
         translate([0,trayHeight + 10,0]) {
             difference() {
                 cube([trayWidth,trayHeight,lidDepth]);
@@ -105,6 +105,7 @@ module playerTray(doLid) {
                     cube([trayWidth-lidInset2*2,trayHeight-lidInset2*2,lidDepth]);
                 translate([lidInset3,lidInset3,lidDepth-lidOverlap])
                     cube([trayWidth-lidInset3*2,trayHeight-lidInset3*2,lidOverlap]);
+                translate([5,5,0]) cube([trayWidth-10,trayHeight-10,99]);
             }
          }
     }
@@ -130,9 +131,9 @@ module divider(list) {
     }
 }
 
-hexgrid(4,3,true,false);
+// hexgrid(4,3,true,false);
 // hexgrid(4,3,true,true);
-if (false) playerTray(true);
+if (true) playerTray(true);
 if (false) divider(
     ["Base","BB","BC","BD","BV","CA",
      "Colony","CV","DD","Decoy","DN","F",
