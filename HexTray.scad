@@ -40,12 +40,12 @@ chitSize = 17;
 
 module playerTray(doLid) {
     // 140mm x 92mm is one quarter the folded game board
-    trayWidth = 150; // Was 150
-    trayHeight = 95; // Was 95;
-    numLanes = 7;
+    trayWidth = 190;
+    trayHeight = 100;
+    numLanes = 9;
     gutter = (trayWidth - (chitSize * numLanes)) / (numLanes+1);
     chitThickness = 1.9;
-    step = chitThickness * 1.89; // fudge factor to get it far from back
+    step = chitThickness * 1.5;
     pegSize = 2;
     sepDepth = 1.3;
     notchDepth = 1;
@@ -60,13 +60,13 @@ module playerTray(doLid) {
               [ 0  , 0  , 0  , 1   ] ] ;
         translate([col * (chitSize + gutter) + gutter,gutter,floorDepth]) {
             cube([chitSize,size,chitSize]);
-            for (n=[0:step:size-step*2]) {
+            /*for (n=[0:step:size-step*2]) {
                 translate([0,n,-0.4]) {
                     cube([chitSize,chitThickness/2,chitSize]);
                 }
-            }
+            }*/
             for (n=[0:step:size-step*2]) {
-                translate([0,n,0.4]) {
+                translate([0,n+3.4,3]) {
                     multmatrix(M) {
                         cube([chitSize + sepDepth*2,chitThickness/2,chitSize]);
                     }
@@ -125,25 +125,23 @@ module playerTray(doLid) {
 
 
 module divider(list) {
-    cols = floor(sqrt(len(list)));
-    cellSize = chitSize * 1.5;
+    cols = ceil(sqrt(len(list)));
     for (i=[0:len(list)-1]) {
-        translate([(i % cols) * cellSize,floor(i / cols) * cellSize,0]) {
-            intersection() {
-                cube([chitSize + 1.9,chitSize,0.6]);
-                translate([chitSize/2 + 1.9/2,chitSize/2 + 1.9/2,0]) { cylinder(h=0.6,d=chitSize / 0.7071 + 0.1); };
-            }
-            translate([chitSize/2 + 0.9,chitSize - 0.4,0.6]) {
-                linear_extrude(0.6) {
-                    text(text=list[i],size=len(list[i])>5?4:5,
-                        halign="center",valign="top");
+        translate([(i % cols) * chitSize * 1.5,floor(i / cols) * chitSize * 0.75,0]) {
+            difference() {
+                union() {
+                    cube([chitSize + 1.9,10.0,0.6]);
+                    translate([1.9/2,2,0.6]) cube([chitSize,6,2.4]);
+                }
+                translate([(chitSize + 1.9)/2,5,-1]) scale([-1,1,1]) linear_extrude(2) {
+                    text(text=list[i],size=4,halign="center",valign="center");
                 }
             }
-        }
+         }
     }
 }
 
-module divider2() {
+/* module divider2() {
     depth = 2.4;
     for (i=[0:4]) {
         for (j=[0:4]) {
@@ -158,18 +156,24 @@ module divider2() {
             }
         }
     }
-}
+} */
 
 
 // hexgrid(4,3,true,false);
 // hexgrid(4,3,true,true);
 //playerTray();
-/*divider(
-    ["Ba","BB","BC","BD","BV","CA",
-     "Col","CV","DD","De","DN","F",
-     "MSP","Mi","R","SC","SW","SY",
-     "T","Ti","U","Fl","Mnr","Gr",
-     "HI","Inf","Mar","Res","Hom"]);*/
+divider(
+    ["Base","BB","BC","BD","BV","CA",
+     "Colony","CV","DD","Decoy","DN","F",
+     "MSP","Mines","R","SC","SW","SY",
+     "T","Titan","Uniq","Flag","Miner","Grav",
+     "HI","Inf","Mar","Res","Home","Fleet",
+     "DS","SB","Cy","Sup","Temp","MB"]);
 
-divider2();
+translate([0,80,0])
+// Replicators
+divider(["0","II","IV","V","VII","IX","XI", "XIII", "XV",
+   "Flag","Exp","Scan","SW","PD","Home","Colony","Fleet"]);
+
+//divider2();
             
