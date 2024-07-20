@@ -40,9 +40,9 @@ chitSize = 17;
 
 module playerTray(doLid) {
     // 140mm x 92mm is one quarter the folded game board
-    trayWidth = 190;
-    trayHeight = 100;
-    numLanes = 9;
+    trayWidth = 23; // 190;
+    trayHeight = 34; // 100;
+    numLanes = 1; // 9;
     gutter = (trayWidth - (chitSize * numLanes)) / (numLanes+1);
     chitThickness = 1.9;
     step = chitThickness * 1.5;
@@ -76,48 +76,37 @@ module playerTray(doLid) {
     }
 
     trayDepth = chitSize * 0.5 + floorDepth;
+    lidInset = .8;
+    lidInset2 = 1.2;
+    lidOverlap = 5;
     difference() {
         cube([trayWidth,trayHeight,trayDepth]);
         for (l=[0:numLanes-1])
             lane(l);
-        translate([trayWidth-notchDepth,trayHeight/2-notchWidth/2,0]) {
-            cube([notchDepth,notchWidth,notchDepth]);
-        }
-        translate([0,trayHeight/2-notchWidth/2,0]) {
-            cube([notchDepth,notchWidth,notchDepth]);
-        }
-        translate([trayWidth/2-notchWidth/2,0,0]) {
-            cube([notchWidth,notchDepth,notchDepth]);
-        }
-        translate([trayWidth/2-notchWidth/2,trayHeight-notchDepth,0]) {
-            cube([notchWidth,notchDepth,notchDepth]);
-        }
+        translate([0,0,trayDepth-lidOverlap]) 
+            cube([lidInset,trayHeight,lidOverlap]);
+        translate([0,0,trayDepth-lidOverlap]) 
+            cube([trayWidth,lidInset,lidOverlap]);
+        translate([0,trayHeight-lidInset,trayDepth-lidOverlap]) 
+            cube([trayWidth,lidInset,lidOverlap]);
+        translate([trayWidth-lidInset,0,trayDepth-lidOverlap]) 
+            cube([lidInset,trayHeight,lidOverlap]);
+
     }
     
     // lid
     if (doLid) {
-        lidDepth = 8;
-        claspDepth = 1;
+        lidDepth = lidOverlap + 5;
+        lidInset3 = lidInset - 0.2; // Don't make the lid too tight
         translate([0,trayHeight + 10,0]) {
             difference() {
                 cube([trayWidth,trayHeight,lidDepth]);
-                translate([gutter,gutter,floorDepth]) {
-                    cube([trayWidth-gutter*2,trayHeight-gutter*2,lidDepth+1]);
-                }
+                translate([lidInset2,lidInset2,floorDepth])            
+                    cube([trayWidth-lidInset2*2,trayHeight-lidInset2*2,lidDepth]);
+                translate([lidInset3,lidInset3,lidDepth-lidOverlap])
+                    cube([trayWidth-lidInset3*2,trayHeight-lidInset3*2,lidOverlap]);
             }
-            translate([trayWidth/2-notchWidth/2,-claspDepth,0]) {
-                cube([notchWidth,claspDepth,lidDepth+trayDepth]);
-                translate([0,claspDepth,lidDepth+trayDepth-(notchDepth-0.2)]) {
-                    cube([notchWidth,notchDepth,notchDepth-0.2]);
-                }
-            }
-            translate([trayWidth/2-notchWidth/2,trayHeight,0]) {
-                cube([notchWidth,claspDepth,lidDepth+trayDepth]);
-                translate([0,-claspDepth,lidDepth+trayDepth-(notchDepth-0.2)]) {
-                    cube([notchWidth,notchDepth,notchDepth-0.2]);
-                }
-            }
-        }
+         }
     }
 }
 
@@ -130,10 +119,10 @@ module divider(list) {
         translate([(i % cols) * chitSize * 1.5,floor(i / cols) * chitSize,0]) {
             difference() {
                 union() {
-                    cube([chitSize + 1.9,15.0,0.6]);
-                    translate([1.9/2,7,0.6]) cube([chitSize,6,2.2]);
+                    cube([chitSize + 1.9,10.0,0.6]);
+                    translate([1.9/2,2,0.6]) cube([chitSize,6,2.0]);
                 }
-                translate([(chitSize + 1.9)/2,11,-1]) scale([-1,1,1]) linear_extrude(2) {
+                translate([(chitSize + 1.9)/2,6,-1]) scale([-1,1,1]) linear_extrude(2) {
                     text(text=list[i],size=4,halign="center",valign="center");
                 }
             }
@@ -141,34 +130,16 @@ module divider(list) {
     }
 }
 
-/* module divider2() {
-    depth = 2.4;
-    for (i=[0:4]) {
-        for (j=[0:4]) {
-            translate([chitSize * 1.5 * i,chitSize * 1.5 * j,0]) {
-                cube([chitSize+1.9,chitSize*0.75,0.6]);
-                translate([1.9/2,chitSize/2,0.6]) {
-                    cube([chitSize,chitSize/4,depth]);
-                    translate([-1.9/2,0,depth]) {
-                        cube([chitSize+1.9,chitSize/4,0.6]);
-                    }
-                }
-            }
-        }
-    }
-} */
-
-
-// hexgrid(4,3,true,false);
+hexgrid(4,3,true,false);
 // hexgrid(4,3,true,true);
-//playerTray();
-divider(
-    ["Base","BB","BC","BD","BV","CA" /*,
+if (false) playerTray(true);
+if (false) divider(
+    ["Base","BB","BC","BD","BV","CA",
      "Colony","CV","DD","Decoy","DN","F",
      "MSP","Mines","R","SC","SW","SY",
      "T","Titan","Uniq","Flag","Miner","Grav",
      "HI","Inf","Mar","Res","Home","Fleet",
-     "DS","SB","Cy","Sup","Temp","MB" */]);
+     "DS","SB","Cy","Sup","Temp","MB"]);
 
 // translate([0,80,0])
 // Replicators
