@@ -40,7 +40,7 @@ module annoTray(cols,rows,rowHeights) {
     }
 }
 
-//annoTray(4,4,[2,2,2,2]);
+annoTray(4,4,[2,2,2,2]);
 //translate([200,0,0]) 
-annoTray(3,4,[2,6,6,5]);
+// annoTray(3,4,[2,6,6,6]);
 
