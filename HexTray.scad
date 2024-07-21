@@ -38,11 +38,11 @@ module hexgrid(nc,nr,bottomCutout,halfRow) {
 
 chitSize = 17;
 
-module playerTray(doLid) {
+module playerTray(doTray,doLid) {
     // 140mm x 92mm is one quarter the folded game board
-    trayWidth = 23; // 190;
-    trayHeight = 34; // 100;
-    numLanes = 1; // 9;
+    trayWidth = 190;
+    trayHeight = 100;
+    numLanes = 9;
     gutter = (trayWidth - (chitSize * numLanes)) / (numLanes+1);
     chitThickness = 1.9;
     step = chitThickness * 1.5;
@@ -79,7 +79,7 @@ module playerTray(doLid) {
     lidInset = .8;
     lidInset2 = 1.2;
     lidOverlap = 5;
-    /*difference() {
+    if (doTray) difference() {
         cube([trayWidth,trayHeight,trayDepth]);
         for (l=[0:numLanes-1])
             lane(l);
@@ -91,8 +91,7 @@ module playerTray(doLid) {
             cube([trayWidth,lidInset,lidOverlap]);
         translate([trayWidth-lidInset,0,trayDepth-lidOverlap]) 
             cube([lidInset,trayHeight,lidOverlap]);
-
-    }*/
+    }
     
     // lid
     if (doLid) {
@@ -105,7 +104,7 @@ module playerTray(doLid) {
                     cube([trayWidth-lidInset2*2,trayHeight-lidInset2*2,lidDepth]);
                 translate([lidInset3,lidInset3,lidDepth-lidOverlap])
                     cube([trayWidth-lidInset3*2,trayHeight-lidInset3*2,lidOverlap]);
-                translate([5,5,0]) cube([trayWidth-10,trayHeight-10,99]);
+                /// translate([5,5,0]) cube([trayWidth-10,trayHeight-10,99]);
             }
          }
     }
@@ -121,9 +120,9 @@ module divider(list) {
             difference() {
                 union() {
                     cube([chitSize + 1.9,10.0,0.6]);
-                    translate([1.9/2,2,0.6]) cube([chitSize,6,2.0]);
+                    translate([1.9/2,2,0.6]) cube([chitSize,6,1.8]);
                 }
-                translate([(chitSize + 1.9)/2,6,-1]) scale([-1,1,1]) linear_extrude(2) {
+                translate([(chitSize + 1.9)/2,5,-1]) scale([-1,1,1]) linear_extrude(2) {
                     text(text=list[i],size=4,halign="center",valign="center");
                 }
             }
@@ -133,8 +132,8 @@ module divider(list) {
 
 // hexgrid(4,3,true,false);
 // hexgrid(4,3,true,true);
-if (true) playerTray(true);
-if (false) divider(
+if (false) playerTray(false,true);
+if (true) divider(
     ["Base","BB","BC","BD","BV","CA",
      "Colony","CV","DD","Decoy","DN","F",
      "MSP","Mines","R","SC","SW","SY",
