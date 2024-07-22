@@ -44,6 +44,7 @@ module playerTray(doTray,doLid) {
     trayHeight = 100;
     numLanes = 9;
     gutter = (trayWidth - (chitSize * numLanes)) / (numLanes+1);
+    // echo (gutter);
     chitThickness = 1.9;
     step = chitThickness * 1.5;
     pegSize = 2;
@@ -54,19 +55,19 @@ module playerTray(doTray,doLid) {
 
     module lane(col) {
         size = trayHeight - gutter - gutter;
-        M = [ [ 1  , 0  , 0  , -sepDepth   ],
-              [ 0  , 1  , 0.7, 0   ],  // The "0.7" is the skew value; pushed along the y axis as z changes.
-              [ 0  , 0  , 1  , 0.8   ],
+        M = [ [ 1  , 0  , 0  , 0   ],
+              [ 0  , 1  , 0.7, 0   ], // shear Y as Z changes
+              [ 0  , 0  , 1  , 0   ],
               [ 0  , 0  , 0  , 1   ] ] ;
         translate([col * (chitSize + gutter) + gutter,gutter,floorDepth]) {
             cube([chitSize,size,chitSize]);
-            /*for (n=[0:step:size-step*2]) {
-                translate([0,n,-0.4]) {
-                    cube([chitSize,chitThickness/2,chitSize]);
+            for (n=[step:step:size-step]) {
+                translate([0,n,-0.2]) {
+                    cube([chitSize,.4,chitSize]);
                 }
-            }*/
-            for (n=[0:step:size-step*2]) {
-                translate([0,n+3.4,3]) {
+            }
+            for (n=[step:step:size-step*2]) {
+                translate([-sepDepth,n+1,1]) {
                     multmatrix(M) {
                         cube([chitSize + sepDepth*2,chitThickness/2,chitSize]);
                     }
@@ -77,8 +78,10 @@ module playerTray(doTray,doLid) {
 
     trayDepth = chitSize * 0.5 + floorDepth;
     lidInset = .8;
-    lidInset2 = 1.2;
+    lidInset2 = 1.8;
     lidOverlap = 5;
+    gridStep = 10;
+    gridSize = 7;
     if (doTray) difference() {
         cube([trayWidth,trayHeight,trayDepth]);
         for (l=[0:numLanes-1])
@@ -96,7 +99,7 @@ module playerTray(doTray,doLid) {
     // lid
     if (doLid) {
         lidDepth = lidOverlap + 6.6;
-        lidInset3 = lidInset - 0.08; // Don't make the lid too tight
+        lidInset3 = lidInset - 0.10; // Don't make the lid too tight
         translate([0,trayHeight + 10,0]) {
             difference() {
                 cube([trayWidth,trayHeight,lidDepth]);
@@ -104,7 +107,14 @@ module playerTray(doTray,doLid) {
                     cube([trayWidth-lidInset2*2,trayHeight-lidInset2*2,lidDepth]);
                 translate([lidInset3,lidInset3,lidDepth-lidOverlap])
                     cube([trayWidth-lidInset3*2,trayHeight-lidInset3*2,lidOverlap]);
-                /// translate([5,5,0]) cube([trayWidth-10,trayHeight-10,99]);
+                translate([gutter,gutter,0]) intersection() {
+                    cube([trayWidth - gutter*2,trayHeight-gutter*2,floorDepth]);
+                    rotate([0,0,45]) 
+                        for (i=[-trayWidth*2:gridStep:trayWidth*2])
+                            for (j=[-trayHeight*2:gridStep:trayHeight*2])
+                                translate([i,j,-floorDepth]) 
+                                    cube([gridSize,gridSize,floorDepth*2]);
+                }        
             }
          }
     }
@@ -115,15 +125,17 @@ module playerTray(doTray,doLid) {
 
 module divider(list) {
     cols = ceil(sqrt(len(list)));
+    sizesByLength = [ 7, 5, 5, 4.5, 4.2, 3.8, 3.7 ];
     for (i=[0:len(list)-1]) {
         translate([(i % cols) * chitSize * 1.5,floor(i / cols) * chitSize,0]) {
             difference() {
                 union() {
-                    cube([chitSize + 1.9,10.0,0.6]);
-                    translate([1.9/2,2,0.6]) cube([chitSize,6,1.8]);
+                    cube([chitSize + 1.9,12.0,0.6]);
+                    translate([1.9/2,2,0.6]) cube([chitSize,8,1.8]);
                 }
-                translate([(chitSize + 1.9)/2,5,-1]) scale([-1,1,1]) linear_extrude(2) {
-                    text(text=list[i],size=4,halign="center",valign="center");
+                translate([(chitSize + 1.9)/2,6,-1]) scale([-1,1,1]) linear_extrude(2.0) {
+                    text(text=list[i],size=sizesByLength[len(list[i])],
+                    halign="center",valign="center");
                 }
             }
          }
@@ -135,7 +147,7 @@ module divider(list) {
 if (false) playerTray(false,true);
 if (true) divider(
     ["Base","BB","BC","BD","BV","CA",
-     "Colony","CV","DD","Decoy","DN","F",
+     "CS","CV","DD","Decoy","DN","F",
      "MSP","Mines","R","SC","SW","SY",
      "T","Titan","Uniq","Flag","Miner","Grav",
      "HI","Inf","Mar","Res","Home","Fleet",
