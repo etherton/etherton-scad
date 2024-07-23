@@ -1,5 +1,7 @@
-module RoundedTray(width,height,depth,gutter,trayStarts) {
+
+module RoundedTray(width,height,depth,gutter,trayStartsIn) {
     rr = 10;
+    trayStarts = concat(trayStartsIn, [width - gutter]);
     difference() {
         cube([width,height,depth]);
         for (bin=[0:len(trayStarts)-2]) {
@@ -49,5 +51,5 @@ module RoundedTray(width,height,depth,gutter,trayStarts) {
     }
 }
 
-// RoundedTray(190,54,20,1,[0,50,120,155,190-1]);
-RoundedTray(150,95,16,1,[0,49,98,148]);
+// RoundedTray(190,54,20,1,[0,50,120,155);
+RoundedTray(150,95,16,1,[0,49,98]);
