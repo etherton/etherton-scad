@@ -3,6 +3,7 @@
 // First well holds factory, factory goods, and culture token (classic)
 // Second well holds three market tokens and up to three racial goods (standard)
 // Third well holds up to six goods tokens.
+include<GenericLid.scad>
 
 tokenThickness = 2.3;
 floorThickness = 1;
@@ -30,6 +31,13 @@ module newTray(numRows) {
             goodsWidth + wallThickness,
             numRows*(goodsHeight + wallThickness) + wallThickness,
             floorThickness+6*tokenThickness]);
+}
+
+module trayLid(numRows) {
+    GenericLid(wallThickness + cultureWidth + wallThickness + marketWidth + wallThickness +
+            goodsWidth + wallThickness,
+            numRows*(goodsHeight + wallThickness) + wallThickness,
+            8,25,5);
 }
 
 module cultureTray(row,label,numRacial,numGoods) {
@@ -89,7 +97,8 @@ module cultureTray(row,label,numRacial,numGoods) {
     }
 }
 
-if (true) difference() {
+// Two 7 row trays
+if (false) difference() {
     newTray(7);
     cultureTray(0,"7",3,6);
     cultureTray(1,"6",2,5);
@@ -100,6 +109,8 @@ if (true) difference() {
     cultureTray(6,"1",2,5);
 }
 
+trayLid(4);
+
 if (false) difference() {
     newTray(7);
     cultureTray(0,"14",2,4);
@@ -109,4 +120,31 @@ if (false) difference() {
     cultureTray(4,"10",3,4);
     cultureTray(5,"9",2,6);
     cultureTray(6,"8",2,6);
+}
+
+// Three 5/5/4 row trays
+if (false) difference() {
+    newTray(5);
+    cultureTray(0,"5",3,6);
+    cultureTray(1,"4",2,6);
+    cultureTray(2,"3",3,6);
+    cultureTray(3,"2",2,6);
+    cultureTray(4,"1",2,5);
+}
+
+if (false) difference() {
+    newTray(5);
+    cultureTray(0,"10",3,4);
+    cultureTray(1,"9",2,6);
+    cultureTray(2,"8",2,6);
+    cultureTray(3,"7",3,6);
+    cultureTray(4,"6",2,5);
+}
+
+if (false) difference() {
+    newTray(4);
+    cultureTray(0,"14",2,4);
+    cultureTray(1,"13",3,5);
+    cultureTray(2,"12",2,6);
+    cultureTray(3,"11",3,5);
 }
