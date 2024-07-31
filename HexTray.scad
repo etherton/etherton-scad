@@ -36,27 +36,24 @@ module hexgrid(nc,nr,bottomCutout,halfRow) {
     }
 }
 
-chitSize = 17;
+chitSize = 16.6;
 
-module playerTray(doTray,doLid) {
+module playerTray(trayWidth, trayHeight, numLanes, offs, doTray, doLid) {
     // 140mm x 92mm is one quarter the folded game board
-    trayWidth = 190;
-    trayHeight = 100;
-    numLanes = 9;
+    // trayWidth = 190;
+    // trayHeight = 100;
+    // numLanes = 9;
     gutter = (trayWidth - (chitSize * numLanes)) / (numLanes+1);
     // echo (gutter);
     chitThickness = 1.9;
     step = chitThickness * 1.5;
-    pegSize = 2;
-    sepDepth = 1.3;
-    notchDepth = 1;
-    notchWidth = 10.6;
-    //echo(gutter);
+    sepDepth = 1;
+    shearYZ = 0.6;
 
     module lane(col) {
         size = trayHeight - gutter - gutter;
         M = [ [ 1  , 0  , 0  , 0   ],
-              [ 0  , 1  , 0.7, 0   ], // shear Y as Z changes
+              [ 0  , 1  , shearYZ, 0   ],
               [ 0  , 0  , 1  , 0   ],
               [ 0  , 0  , 0  , 1   ] ] ;
         translate([col * (chitSize + gutter) + gutter,gutter,floorDepth]) {
@@ -67,7 +64,7 @@ module playerTray(doTray,doLid) {
                 }
             }
             for (n=[step:step:size-step*2]) {
-                translate([-sepDepth,n+1,1]) {
+                translate([-sepDepth,n+offs,1]) {
                     multmatrix(M) {
                         cube([chitSize + sepDepth*2,chitThickness/2,chitSize]);
                     }
@@ -130,10 +127,10 @@ module divider(list) {
         translate([(i % cols) * chitSize * 1.5,floor(i / cols) * chitSize,0]) {
             difference() {
                 union() {
-                    cube([chitSize + 1.9,12.0,0.6]);
-                    translate([1.9/2,2,0.6]) cube([chitSize,8,1.8]);
+                    cube([chitSize + 1.4,12.0,0.6]);
+                    translate([1.2/2,2,0.6]) cube([chitSize,8,1.8]);
                 }
-                translate([(chitSize + 1.9)/2,6,-1]) scale([-1,1,1]) linear_extrude(2.0) {
+                translate([(chitSize + 1.2)/2,6,-1]) scale([-1,1,1]) linear_extrude(2.0) {
                     text(text=list[i],size=sizesByLength[len(list[i])],
                     halign="center",valign="center");
                 }
@@ -144,9 +141,18 @@ module divider(list) {
 
 // hexgrid(4,3,true,false);
 // hexgrid(4,3,true,true);
-if (false) playerTray(false,true);
-if (true) divider(
-    ["Base","BB","BC","BD","BV","CA",
+//if (false) playerTray(false,true);
+// big tray
+// playerTray(190,100,9,1,true,false);
+
+//  smaller old tray
+//playerTray(140,95,7,1,true,false);
+
+// even smaller ships only
+playerTray(100,95,5,0,true,false);
+
+if (false) divider(
+    ["Base","BB","BC","BD","BV","CA", 
      "CS","CV","DD","Decoy","DN","F",
      "MSP","Mines","R","SC","SW","SY",
      "T","Titan","Uniq","Flag","Miner","Grav",
