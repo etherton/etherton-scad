@@ -12,7 +12,7 @@ module RoundedTrayAndInsetLid(width,height,depth,gutter,trayStarts) {
         translate([width-inset,0,depth-lidDepth]) cube([inset,height,lidDepth]);
     }
    translate([0,height+10,0]) {
-        GenericLid(width-2,height-2,lidDepth-3);
+        GenericLid(width-2,height-2,lidDepth-2,gap=0.3);
     }
 }
 
@@ -20,11 +20,11 @@ module RoundedTrayAndInsetLid(width,height,depth,gutter,trayStarts) {
 // RoundedTray(150,95,16,1,[49,98]);
 
 // Rovers and rockets
-//RoundedTray(102,68,25,2,[70]);
+RoundedTrayAndInsetLid(102,68,33,2,[70]);
 
 // Resources
-// RoundedTray(102,68,25,2,[25,50,75]);
+// RoundedTrayAndInsetLid(102,68,33,2,[25,50,75]);
 
 // Hearts
-RoundedTrayAndInsetLid(102,68,25,2,[30,50,72]);
+//RoundedTrayAndInsetLid(102,68,25,2,[30,50,72]);
 // GenericLid(102,68,5);
