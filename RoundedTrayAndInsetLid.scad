@@ -16,14 +16,15 @@ module RoundedTrayAndInsetLid(width,height,depth,gutter,trayStarts) {
     }
 }
 
+
 // RoundedTray(190,54,20,1,[0,50,120,155);
 // RoundedTray(150,95,16,1,[49,98]);
 
-// Rovers and rockets
-RoundedTrayAndInsetLid(102,68,33,2,[70]);
+// R overs and rockets
+//RoundedTrayAndInsetLid(102,68,33,2,[70]);
 
 // Resources
-// RoundedTrayAndInsetLid(102,68,33,2,[25,50,75]);
+RoundedTrayAndInsetLid(102,68,33,2,[25,50,75]);
 
 // Hearts
 //RoundedTrayAndInsetLid(102,68,25,2,[30,50,72]);
