@@ -32,7 +32,10 @@ module RoundedTrayAndInsetLid(width,height,depth,gutter,trayStarts) {
 // GenericLid(102,68,5);
 
 // Amoebas
-RoundedTrayAndInsetLid(90,80,20,2,[29,58]);
+// RoundedTrayAndInsetLid(90,80,20,2,[29,58]);
 
 // Fleet numbers
 //RoundedTrayAndInsetLid(130,80,20,2,[70,105]);
+
+// Extra tray
+RoundedTrayAndInsetLid(140,36,20,2,[50,100]);
