@@ -11,9 +11,9 @@ module RoundedTrayAndInsetLid(width,height,depth,gutter,trayStarts) {
         translate([0,height-inset,depth-lidDepth]) cube([width,inset,lidDepth]);
         translate([width-inset,0,depth-lidDepth]) cube([inset,height,lidDepth]);
     }
-   /* translate([0,height+10,0]) {
+   translate([0,height+10,0]) {
         GenericLid(width-2,height-2,lidDepth-2,gap=0.3);
-    } */
+   }
 }
 
 //GenericLid(102-2,68-2,6,gap=0.3);
@@ -28,5 +28,11 @@ module RoundedTrayAndInsetLid(width,height,depth,gutter,trayStarts) {
 //RoundedTrayAndInsetLid(102,68,33,2,[25,50,75]);
 
 // Hearts
-RoundedTrayAndInsetLid(102,68,27,2,[30,50,72]);
+// RoundedTrayAndInsetLid(102,68,27,2,[30,50,72]);
 // GenericLid(102,68,5);
+
+// Amoebas
+RoundedTrayAndInsetLid(90,80,20,2,[29,58]);
+
+// Fleet numbers
+//RoundedTrayAndInsetLid(130,80,20,2,[70,105]);
