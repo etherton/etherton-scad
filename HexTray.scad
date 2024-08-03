@@ -5,6 +5,32 @@ floorDepth = 1;
 cutoutWidth = hexHeight * 0.25;
 wallThickness = 0.6;
 
+module SideTray() {
+    d = trayDepth;
+    pX = 0.5 * hexRadius;
+    pY = (0.5 * hexHeight);
+    w = 48;
+    f = 1.5;
+    inset = 0.8;
+    difference() {
+        linear_extrude(d) polygon([
+        [0,0], [pX,pY], [0,pY * 2], [pX, pY * 3],
+        [0,pY * 4], [pX, pY * 5], [0, pY * 6],
+        [w, pY * 6], [w, 0]]);
+
+        translate([0,0,floorDepth]) {
+            linear_extrude(d) polygon([
+                [inset*f,inset], [pX+inset,pY], [inset,pY*2], 
+                [pX + inset, pY * 3 - inset/2], [w - inset,pY * 3 - inset/2],
+                [w - inset, inset]]);
+            linear_extrude(d) polygon([
+                [pX + inset, pY * 3 + inset/2], [inset, pY * 4], 
+                [pX + inset, pY * 5], [inset*f,pY * 6 - inset],
+                [w - inset, pY * 6 - inset], [w - inset,pY * 3 + inset/2]]);
+        }
+    }
+}
+
 module hexgrid(nc,nr,bottomCutout,halfRow) {
     for (row=[0:nr-1]) {
         for (col=[0:nc-1]) {
@@ -149,7 +175,7 @@ module divider(list) {
 //playerTray(140,95,7,1,true,false);
 
 // even smaller ships only
-playerTray(100,95,5,0,true,false);
+//playerTray(100,95,5,0,true,false);
 
 if (false) divider(
     ["Base","BB","BC","BD","BV","CA", 
@@ -165,4 +191,6 @@ if (false) divider(
    "Flag","Exp","Scan","SW","PD","Home","Colony","Fleet"]); */
 
 //divider2();
+
+SideTray();
             
