@@ -121,9 +121,9 @@ module playerTray(trayWidth, trayHeight, numLanes, offs, doTray, doLid) {
     
     // lid
     if (doLid) {
-        lidDepth = lidOverlap + 6.6;
+        lidDepth = lidOverlap + 7;
         lidInset3 = lidInset - 0.10; // Don't make the lid too tight
-        translate([0,trayHeight + 10,0]) {
+        translate([0,doTray? trayHeight + 10 : 0,0]) {
             difference() {
                 cube([trayWidth,trayHeight,lidDepth]);
                 translate([lidInset2,lidInset2,floorDepth])            
@@ -171,8 +171,10 @@ module divider(list) {
 // big tray
 // playerTray(190,100,9,1,true,false);
 
-//  smaller old tray
-//playerTray(140,95,7,1,true,false);
+//  current best tray
+playerTray(140,110,7,0,false,true);
+//playerTray(22,110,1,.4,true,false);
+
 
 // even smaller ships only
 //playerTray(100,95,5,0,true,false);
@@ -185,12 +187,14 @@ if (false) divider(
      "HI","Inf","Mar","Res","Home","Fleet",
      "DS","SB","Cy","Sup","Temp","MB"]);
 
+if (false) divider(["0","II","IV","V","VII","IX","XI", "XIII", "XV",
+   "Flag","Exp","Scan","SW","PD","Home","Colony","Fleet"]);
+
 // translate([0,80,0])
 // Replicators
-/* divider(["0","II","IV","V","VII","IX","XI", "XIII", "XV",
-   "Flag","Exp","Scan","SW","PD","Home","Colony","Fleet"]); */
+
 
 //divider2();
 
-SideTray();
+// SideTray();
             

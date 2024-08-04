@@ -38,4 +38,4 @@ module RoundedTrayAndInsetLid(width,height,depth,gutter,trayStarts) {
 //RoundedTrayAndInsetLid(130,80,20,2,[70,105]);
 
 // Extra tray
-RoundedTrayAndInsetLid(140,36,20,2,[50,100]);
+RoundedTrayAndInsetLid(140,36,19,2,[50,100]);
