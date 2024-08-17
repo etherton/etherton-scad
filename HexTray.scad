@@ -1,24 +1,73 @@
 hexHeight = 50;
 hexRadius = hexHeight / 1.7320508;
-trayDepth = 20;
+trayDepth = 24;
 floorDepth = 1;
 cutoutWidth = hexHeight * 0.25;
 wallThickness = 0.6;
 
-module SideTray() {
+module SideTray(tray=2) {
     d = trayDepth;
     pX = 0.5 * hexRadius;
     pY = (0.5 * hexHeight);
-    w = 48;
+    w = 44;
     f = 1.5;
     inset = 0.8;
-    difference() {
-        linear_extrude(d) polygon([
+    module topRight() {
+       polygon([
         [0,0], [pX,pY], [0,pY * 2], [pX, pY * 3],
-        [0,pY * 4], [pX, pY * 5], [0, pY * 6],
-        [w, pY * 6], [w, 0]]);
+        [-inset,pY * 4 + inset], [-2*pX,pY * 4 + inset], [-3*pX,pY*5],
+        [w, pY * 5], [w, 0]]);
+    }
+    gutter = 18;
+    module bottomRight() {
+        polygon([
+        [0,-gutter], [0,0], [pX,pY],
+        [0,pY*2],[pX,pY*3],[0,pY*4],[pX,pY*5],[0,pY*6],
+        [w,pY*6],[w,-gutter]]);
+    }
+    module bottomLeft() {
+        polygon([
+            [0,0],[pX*3,0],[pX*4,-pY],
+            [pX*6,-pY],[pX*7,0],[pX*9,0],[pX*10,-pY],
+            [pX*12,-pY],[pX*12,-pY-gutter],[0,-pY-gutter]]);
+    }
+    if (tray==0) difference() {
+        linear_extrude(trayDepth) topright();
+        translate([0,0,floorDepth]) 
+            linear_extrude(trayDepth) 
+                offset(delta=-inset) topright();
+    }
+    else if (tray==1) union() {
+        difference() {
+            linear_extrude(trayDepth) bottomRight();
+            translate([0,0,floorDepth]) 
+                linear_extrude(trayDepth) 
+                    offset(delta=-inset) bottomRight();
+        }
+        translate([pX,pY-inset/2,0]) cube([w-pX,inset,trayDepth]);
+        translate([pX,pY*3-inset/2
+        ,0]) cube([w-pX,inset,trayDepth]);
+    }
+    else if (tray==2) union() {
+        trayDepth2 = 10;
+        difference() {
+            linear_extrude(trayDepth2) bottomLeft();
+            translate([0,0,floorDepth]) 
+                linear_extrude(trayDepth2) 
+                    offset(delta=-inset) bottomLeft();
+            translate([inset,-pY-gutter,trayDepth2]) cube([50-inset,inset*2,99]);
+            translate([50+inset,-pY-gutter,10]) cube([50-inset,inset*2,99]);
+            translate([100+inset,-pY-gutter,10]) cube([50-inset,inset*2,99]);
+            translate([150+inset,-pY-gutter,10]) cube([50-inset,inset*2,99]);
+        }
+        translate([0,-pY-inset,0]) cube([pX*12,inset,trayDepth]);
+        translate([50,-pY-gutter,0]) cube([inset,gutter-inset*2,trayDepth2]);
+        translate([61,-pY-gutter,0]) cube([inset,gutter-inset*2,trayDepth2]);
+        translate([111,-pY-gutter,0]) cube([inset,gutter-inset*2,trayDepth2]);
+        translate([122,-pY-gutter,0]) cube([inset,gutter-inset*2,trayDepth2]);
+   }
 
-        translate([0,0,floorDepth]) {
+        /* translate([0,0,floorDepth]) {
             linear_extrude(d) polygon([
                 [inset*f,inset], [pX+inset,pY], [inset,pY*2], 
                 [pX + inset, pY * 3 - inset/2], [w - inset,pY * 3 - inset/2],
@@ -27,7 +76,20 @@ module SideTray() {
                 [pX + inset, pY * 3 + inset/2], [inset, pY * 4], 
                 [pX + inset, pY * 5], [inset*f,pY * 6 - inset],
                 [w - inset, pY * 6 - inset], [w - inset,pY * 3 + inset/2]]);
-        }
+        } */
+    
+}
+
+module NumbersTray() {
+    inset = 0.8;
+    floorDepth = 0.8;
+    width = 33;
+    height = 280;
+    difference() {
+        cube([width,height,19.4]);
+        translate([inset,inset,floorDepth]) cube([width-inset*2,height/2,99]);
+        translate([inset,inset+height/2+inset,floorDepth]) cube([width-inset*2,height*0.3-inset,99]);
+        translate([inset,inset+height*0.80+inset,floorDepth]) cube([width-inset*2,height*0.2-inset*3,99]);
     }
 }
 
@@ -154,10 +216,11 @@ module divider(list) {
             difference() {
                 union() {
                     cube([chitSize + 1.4,12.0,0.6]);
-                    translate([1.2/2,2,0.6]) cube([chitSize,8,1.8]);
+                    translate([1.2/2,2,0.6]) cube([chitSize,8,1.4]);
                 }
-                translate([(chitSize + 1.2)/2,6,-1]) scale([-1,1,1]) linear_extrude(2.0) {
+                translate([(chitSize + 1.2)/2,6,-1]) scale([-1,1,1]) linear_extrude(1.6) {
                     text(text=list[i],size=sizesByLength[len(list[i])],
+                    font="Liberation Serif:style=Bold",
                     halign="center",valign="center");
                 }
             }
@@ -165,15 +228,15 @@ module divider(list) {
     }
 }
 
-// hexgrid(4,3,true,false);
-// hexgrid(4,3,true,true);
+//hexgrid(4,3,true,false);
+//hexgrid(4,3,true,true);
+//translate([130,280,0]) rotate([0,0,180]) hexgrid(4,3,true,true);
 //if (false) playerTray(false,true);
 // big tray
 // playerTray(190,100,9,1,true,false);
 
 //  current best tray
-playerTray(140,110,7,0,false,true);
-//playerTray(22,110,1,.4,true,false);
+//playerTray(140,10,7,0,false,true);
 
 
 // even smaller ships only
@@ -196,5 +259,6 @@ if (false) divider(["0","II","IV","V","VII","IX","XI", "XIII", "XV",
 
 //divider2();
 
-// SideTray();
+SideTray(2);
+//rotate([0,0,45]) NumbersTray();
             
