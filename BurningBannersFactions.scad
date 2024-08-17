@@ -71,8 +71,9 @@ module bbTray(t1,t2,counterList,markerList,extraWells=2) {
                     cube([adjustC(1),counterSize,totalDepth]);
         }
     }
-    
-    if (false) translate([120,0,0]) {
+}
+
+module cardHolder() {
         eps = 0.5;
         siz = 10;
         h = 15;
@@ -88,10 +89,11 @@ module bbTray(t1,t2,counterList,markerList,extraWells=2) {
             [cardWidth-siz-eps,cardHeight-eps],
             [cardWidth-eps,cardHeight-eps], 
             [cardWidth-eps,cardHeight-eps-siz]]);
-    }
+        translate([cardWidth/2,cardHeight/2,0])
+            cylinder(d=siz,h=h);
 }
 
-which = -1;
+which = 6;
 
 if (which==0 || which==-1) translate([0,0,0]) bbTray("The Eastern","Empire",[7,4,5,4,1,2,6],biggestMarker);
 
@@ -103,6 +105,6 @@ if (which==3 || which==-1) translate([0,110,0]) bbTray("The Orcs","",[10,5,3,3,2
 
 if (which==4 || which==-1) translate([120,110,0]) bbTray("Fjordland","",[7,4,3,2,2,1,7], [10,1,3]);
 
-if (which==5 || which==-1) translate([240,110,0]) bbTray("The","Oathborn",[9,5,6,2,2,6,1], [10,1,3], 3);
+if (which==5 || which==-1) translate([240,110,0]) bbTray("The","Oathborn",[9,5,6,2,2,1,6], [10,1,3], 3);
 
-
+if (which==6) for (i=[0:5]) translate([i*20,0,0]) cardHolder();
