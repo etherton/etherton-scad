@@ -1,7 +1,7 @@
 hexHeight = 50;
 hexRadius = hexHeight / 1.7320508;
 trayDepth = 24;
-floorDepth = 1;
+floorDepth = 0.6; // 1;
 cutoutWidth = hexHeight * 0.25;
 wallThickness = 0.6;
 
@@ -30,6 +30,13 @@ module SideTray(tray=2) {
             [0,0],[pX*3,0],[pX*4,-pY],
             [pX*6,-pY],[pX*7,0],[pX*9,0],[pX*10,-pY],
             [pX*12,-pY],[pX*12,-pY-gutter],[0,-pY-gutter]]);
+    }
+    module bucket() {
+        polygon([[0,0],[pX*4,0],[pX*3,-pY],[pX,-pY]]);
+    }
+    module cardTray() {
+        polygon([[0,0],[pX*13,0],[pX*12,pY],[pX*13,pY*2],
+        [pX*12,pY*3],[pX*13,pY*4],[0,pY*4]]);
     }
     if (tray==0) difference() {
         linear_extrude(trayDepth) topright();
@@ -66,6 +73,27 @@ module SideTray(tray=2) {
         translate([111,-pY-gutter,0]) cube([inset,gutter-inset*2,trayDepth2]);
         translate([122,-pY-gutter,0]) cube([inset,gutter-inset*2,trayDepth2]);
    }
+   else if (tray==3) {
+       difference() {
+            linear_extrude(trayDepth) bucket();
+            translate([0,0,floorDepth]) 
+                linear_extrude(trayDepth2) 
+                    offset(delta=-inset) bucket();
+       }
+   }
+   else if (tray==4) {
+       difference() {
+           linear_extrude(trayDepth) cardTray();
+           translate([0,0,floorDepth]) 
+                linear_extrude(trayDepth2) 
+                    offset(delta=-inset) cardTray();
+           translate([20,20,0]) cube([30,pY*4-40,floorDepth]);
+           translate([90,20,0]) cube([30,pY*4-40,floorDepth]);
+       }
+       translate([70,0,0]) cube([inset,pY*4,trayDepth]);
+       translate([140,0,0]) cube([inset,pY*4,trayDepth]);
+       translate([140,pY*2-inset/2,0]) cube([pX*13-140-inset,inset,trayDepth]);
+    }
 
         /* translate([0,0,floorDepth]) {
             linear_extrude(d) polygon([
@@ -136,7 +164,7 @@ module playerTray(trayWidth, trayHeight, numLanes, offs, doTray, doLid) {
     chitThickness = 1.9;
     step = chitThickness * 1.5;
     sepDepth = 1;
-    shearYZ = 0.6;
+    shearYZ = 0.7;
 
     module lane(col) {
         size = trayHeight - gutter - gutter;
@@ -146,11 +174,11 @@ module playerTray(trayWidth, trayHeight, numLanes, offs, doTray, doLid) {
               [ 0  , 0  , 0  , 1   ] ] ;
         translate([col * (chitSize + gutter) + gutter,gutter,floorDepth]) {
             cube([chitSize,size,chitSize]);
-            for (n=[step:step:size-step]) {
+            /* for (n=[step:step:size-step]) {
                 translate([0,n,-0.2]) {
                     cube([chitSize,.4,chitSize]);
                 }
-            }
+            } */
             for (n=[step:step:size-step*2]) {
                 translate([-sepDepth,n+offs,1]) {
                     multmatrix(M) {
@@ -183,23 +211,23 @@ module playerTray(trayWidth, trayHeight, numLanes, offs, doTray, doLid) {
     
     // lid
     if (doLid) {
-        lidDepth = lidOverlap + 7;
+        lidDepth = lidOverlap + 6;
         lidInset3 = lidInset - 0.10; // Don't make the lid too tight
         translate([0,doTray? trayHeight + 10 : 0,0]) {
             difference() {
                 cube([trayWidth,trayHeight,lidDepth]);
                 translate([lidInset2,lidInset2,floorDepth])            
                     cube([trayWidth-lidInset2*2,trayHeight-lidInset2*2,lidDepth]);
-                translate([lidInset3,lidInset3,lidDepth-lidOverlap])
+                translate([lidInset3,lidInset3,6.5])
                     cube([trayWidth-lidInset3*2,trayHeight-lidInset3*2,lidOverlap]);
-                translate([gutter,gutter,0]) intersection() {
+                /* translate([gutter,gutter,0]) intersection() {
                     cube([trayWidth - gutter*2,trayHeight-gutter*2,floorDepth]);
                     rotate([0,0,45]) 
                         for (i=[-trayWidth*2:gridStep:trayWidth*2])
                             for (j=[-trayHeight*2:gridStep:trayHeight*2])
                                 translate([i,j,-floorDepth]) 
                                     cube([gridSize,gridSize,floorDepth*2]);
-                }        
+                }  */      
             }
          }
     }
@@ -235,6 +263,8 @@ module divider(list) {
 // big tray
 // playerTray(190,100,9,1,true,false);
 
+// special replicators tray
+playerTray(218,50,11,0,false,true);
 //  current best tray
 //playerTray(140,10,7,0,false,true);
 
@@ -259,6 +289,6 @@ if (false) divider(["0","II","IV","V","VII","IX","XI", "XIII", "XV",
 
 //divider2();
 
-SideTray(2);
+//SideTray(4);
 //rotate([0,0,45]) NumbersTray();
             
