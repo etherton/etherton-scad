@@ -39,10 +39,10 @@ module SideTray(tray=2) {
         [pX*12,pY*3],[pX*13,pY*4],[0,pY*4]]);
     }
     if (tray==0) difference() {
-        linear_extrude(trayDepth) topright();
+        linear_extrude(trayDepth) topRight();
         translate([0,0,floorDepth]) 
             linear_extrude(trayDepth) 
-                offset(delta=-inset) topright();
+                offset(delta=-inset) topRight();
     }
     else if (tray==1) union() {
         difference() {
@@ -85,7 +85,7 @@ module SideTray(tray=2) {
        difference() {
            linear_extrude(trayDepth) cardTray();
            translate([0,0,floorDepth]) 
-                linear_extrude(trayDepth2) 
+                linear_extrude(trayDepth) 
                     offset(delta=-inset) cardTray();
            translate([20,20,0]) cube([30,pY*4-40,floorDepth]);
            translate([90,20,0]) cube([30,pY*4-40,floorDepth]);
@@ -122,6 +122,7 @@ module NumbersTray() {
 }
 
 module hexgrid(nc,nr,bottomCutout,halfRow) {
+    floorDepth = 1;
     for (row=[0:nr-1]) {
         for (col=[0:nc-1]) {
             if (!halfRow || row || (col%2)) translate([
@@ -256,17 +257,19 @@ module divider(list) {
     }
 }
 
-//hexgrid(4,3,true,false);
-//hexgrid(4,3,true,true);
+/////hexgrid(4,3,true,false);
+
+// Remastered hex grid, deeper, ten wells
+// hexgrid(4,3,true,true);
 //translate([130,280,0]) rotate([0,0,180]) hexgrid(4,3,true,true);
 //if (false) playerTray(false,true);
 // big tray
 // playerTray(190,100,9,1,true,false);
 
 // special replicators tray
-playerTray(218,50,11,0,false,true);
+// playerTray(218,50,11,0,false,true);
 //  current best tray
-//playerTray(140,10,7,0,false,true);
+//playerTray(140,109,7,-1.2,false,true);
 
 
 // even smaller ships only
@@ -289,6 +292,7 @@ if (false) divider(["0","II","IV","V","VII","IX","XI", "XIII", "XV",
 
 //divider2();
 
-//SideTray(4);
-//rotate([0,0,45]) NumbersTray();
+SideTray(4);
+// rotate([0,0,45]) 
+//NumbersTray();
             
