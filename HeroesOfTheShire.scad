@@ -1,118 +1,16 @@
-hexHeight = 66; // 50;
+hexHeight = 67; // 50;
 hexRadius = hexHeight / 1.7320508;
-trayDepth = 32; // 24;
+trayDepth = 22.6; // 24;
 floorDepth = 0.6; // 0.6; // 1;
 cutoutWidth = hexHeight * 0.25;
 wallThickness = 0.6; // 0.6;
 
-module SideTray(tray=2) {
-    d = trayDepth;
-    pX = 0.5 * hexRadius;
-    pY = (0.5 * hexHeight);
-    w = 44;
-    f = 1.5;
-    inset = 0.8;
-    module topRight() {
-       polygon([
-        [0,0], [pX,pY], [0,pY * 2], [pX, pY * 3],
-        [-inset,pY * 4 + inset], [-2*pX,pY * 4 + inset], [-3*pX,pY*5],
-        [w, pY * 5], [w, 0]]);
-    }
-    gutter = 18;
-    module bottomRight() {
-        polygon([
-        [0,-gutter], [0,0], [pX,pY],
-        [0,pY*2],[pX,pY*3],[0,pY*4],[pX,pY*5],[0,pY*6],
-        [w,pY*6],[w,-gutter]]);
-    }
-    module bottomLeft() {
-        polygon([
-            [0,0],[pX*3,0],[pX*4,-pY],
-            [pX*6,-pY],[pX*7,0],[pX*9,0],[pX*10,-pY],
-            [pX*12,-pY],[pX*12,-pY-gutter],[0,-pY-gutter]]);
-    }
-    module bucket() {
-        polygon([[0,0],[pX*4,0],[pX*3,-pY],[pX,-pY]]);
-    }
-    module cardTray() {
-        polygon([[0,0],[pX*13,0],[pX*12,pY],[pX*13,pY*2],
-        [pX*12,pY*3],[pX*13,pY*4],[0,pY*4]]);
-    }
-    if (tray==0) difference() {
-        linear_extrude(trayDepth) topRight();
-        translate([0,0,floorDepth]) 
-            linear_extrude(trayDepth) 
-                offset(delta=-inset) topRight();
-    }
-    else if (tray==1) union() {
-        difference() {
-            linear_extrude(trayDepth) bottomRight();
-            translate([0,0,floorDepth]) 
-                linear_extrude(trayDepth) 
-                    offset(delta=-inset) bottomRight();
-        }
-        translate([pX,pY-inset/2,0]) cube([w-pX,inset,trayDepth]);
-        translate([pX,pY*3-inset/2
-        ,0]) cube([w-pX,inset,trayDepth]);
-    }
-    else if (tray==2) union() {
-        trayDepth2 = 10;
-        difference() {
-            linear_extrude(trayDepth2) bottomLeft();
-            translate([0,0,floorDepth]) 
-                linear_extrude(trayDepth2) 
-                    offset(delta=-inset) bottomLeft();
-            translate([inset,-pY-gutter,trayDepth2]) cube([50-inset,inset*2,99]);
-            translate([50+inset,-pY-gutter,10]) cube([50-inset,inset*2,99]);
-            translate([100+inset,-pY-gutter,10]) cube([50-inset,inset*2,99]);
-            translate([150+inset,-pY-gutter,10]) cube([50-inset,inset*2,99]);
-        }
-        translate([0,-pY-inset,0]) cube([pX*12,inset,trayDepth]);
-        translate([50,-pY-gutter,0]) cube([inset,gutter-inset*2,trayDepth2]);
-        translate([61,-pY-gutter,0]) cube([inset,gutter-inset*2,trayDepth2]);
-        translate([111,-pY-gutter,0]) cube([inset,gutter-inset*2,trayDepth2]);
-        translate([122,-pY-gutter,0]) cube([inset,gutter-inset*2,trayDepth2]);
-   }
-   else if (tray==3) {
-       difference() {
-            linear_extrude(trayDepth) bucket();
-            translate([0,0,floorDepth]) 
-                linear_extrude(trayDepth2) 
-                    offset(delta=-inset) bucket();
-       }
-   }
-   else if (tray==4) {
-       difference() {
-           linear_extrude(trayDepth) cardTray();
-           translate([0,0,floorDepth]) 
-                linear_extrude(trayDepth) 
-                    offset(delta=-inset) cardTray();
-           translate([20,20,0]) cube([30,pY*4-40,floorDepth]);
-           translate([90,20,0]) cube([30,pY*4-40,floorDepth]);
-       }
-       translate([70,0,0]) cube([inset,pY*4,trayDepth]);
-       translate([140,0,0]) cube([inset,pY*4,trayDepth]);
-       translate([140,pY*2-inset/2,0]) cube([pX*13-140-inset,inset,trayDepth]);
-    }
-
-        /* translate([0,0,floorDepth]) {
-            linear_extrude(d) polygon([
-                [inset*f,inset], [pX+inset,pY], [inset,pY*2], 
-                [pX + inset, pY * 3 - inset/2], [w - inset,pY * 3 - inset/2],
-                [w - inset, inset]]);
-            linear_extrude(d) polygon([
-                [pX + inset, pY * 3 + inset/2], [inset, pY * 4], 
-                [pX + inset, pY * 5], [inset*f,pY * 6 - inset],
-                [w - inset, pY * 6 - inset], [w - inset,pY * 3 + inset/2]]);
-        } */
-    
-}
 
 module hexgrid(nc,nr,bottomCutout,halfRow) {
     floorDepth = 1;
     for (row=[0:nr-1]) {
         for (col=[0:nc-1]) {
-            if (!halfRow || row || (col!=0)) translate([
+            if (row!=2||col!=1) translate([
                 col * 1.5 * hexRadius,
                 ((col%2)? hexRadius * 0.866025 : 0) + row * hexHeight,0]) {
                 difference() {
@@ -141,7 +39,7 @@ module hexgrid(nc,nr,bottomCutout,halfRow) {
 }
 
 
-module token_tray(tokenSize = 17,depth = 10,columns = 11) {
+module token_tray(tokenSize = 17,depth = 10,columns = 11, counts=[]) {
     tokenR = tokenSize/2;
     cutout = 1;
     wall = 0.6;
@@ -153,9 +51,9 @@ module token_tray(tokenSize = 17,depth = 10,columns = 11) {
     difference() {
         cube([width,height,depth+floorDepth]);
         for (i=[0:columns-1]) {
-            translate([i * (tokenSize+wall) + wall + tokenR,tokenR-cutout,floorDepth])
+            translate([i * (tokenSize+wall) + wall + tokenR,tokenR-cutout,len(counts)? (depth+floorDepth - 1.64 * counts[i+columns]) : floorDepth])
                 cylinder(h=depth,d=tokenSize);
-            translate([i * (tokenSize+wall) + wall + tokenR,height-tokenR+cutout,floorDepth])
+            translate([i * (tokenSize+wall) + wall + tokenR,height-tokenR+cutout,len(counts)? (depth+floorDepth - 1.64 * counts[i]) : floorDepth ])
                 cylinder(h=depth,d=tokenSize);
         }
     }
@@ -165,7 +63,7 @@ module single_layer_tray(tokenSize = 17, columns = 10, rows = 5) {
     tokenR = tokenSize/2;
     floorDepth = 0.6;
     wall = 1;
-    depth = 1.6;
+    depth = 1.8;
     cell = tokenSize + wall;
     f = sin(60);
     difference() {
@@ -175,7 +73,7 @@ module single_layer_tray(tokenSize = 17, columns = 10, rows = 5) {
                 for (c=[0:r%2?columns-2:columns-1]) {
                     offsetX = (r%2)? tokenR*2 : tokenR;
                     translate([offsetX + cell * c,tokenR + (cell*r*f),0]) {
-                        cylinder(h=depth,r=tokenR-4,center=true);
+                        cylinder(h=depth,r=tokenR-3,center=true);
                         translate([0,0,floorDepth]) cylinder(h=depth+1,r=tokenR);
                     }
                 }
@@ -205,13 +103,99 @@ module standee_tray(tokenDiam = 31,tokenHeight=41,depth = 7.5,columns = 5) {
     }
 }
 
+module scenario_tray(cardHeight=88.2,cardWidth=63,deckThick=16) {
+    floorDepth = 0.6;
+    trayDepth = 6.6;
+    wall = 1;
+    margin = 2;
+    width = cardHeight + margin + wall*2;
+    height = cardWidth + margin + wall;
+    totalDepth = floorDepth + trayDepth + deckThick;
+    tokenSize = 17;
+    tokenR = tokenSize / 2;
+    cutout = 1;
+    difference() {
+        cube([width,height,totalDepth]);
+        translate([0,0,floorDepth]) {
+            for (i=[0:3]) {
+                translate([(width/4)*i + width/8,tokenR-cutout,0]) 
+                    cylinder(h=trayDepth,d=tokenSize);
+            }
+            translate([wall,tokenSize,0]) {
+                difference() {
+                    cube([31,41,trayDepth]);
+                    translate([0,10,0]) cube([31,21,1.64]);
+                }
+                translate([32,0,0]) 
+                    cube([width-32-wall*2,height-tokenSize-wall,trayDepth]);
+            }
+        }
+        translate([wall,0,trayDepth]) 
+            cube([cardHeight + margin,cardWidth + margin, deckThick+1]);
+    }
+    
+    give = 0.2;
+    tol = (wall+give)*2;
+    translate([-tol/2,height+4,0]) {
+        margin = (wall+give)*2;
+        difference() {
+            cube([tol + width,totalDepth + tol,tol + height]);
+            translate([wall,wall,wall]) {
+                cube([width + give*2,totalDepth + give*2,tol + height]);
+                translate([width/2+give,totalDepth/2,height])
+                    rotate([-90,0,0]) 
+                        scale([2,3.5,1])
+                            cylinder(h=totalDepth*2,d=width/3,center=true);
+            }
+        }
+    }     
+}
+
 // Heroes terrain hexes
-//hexgrid(2,3,false,true);
+//hexgrid(3,3,false,false);
 
 // Token tray
-//token_tray();
+// token_tray();
+// dmg trays + misc condition trays
+/*
+token_tray(17,9,8,[ 1,2,2,2,4, 4,4,3,
+                     2,1,5,3,5, 4,5,4, ]);
+
+// boss tokens (left) and player tokens (right)
+translate([0,40,0]) token_tray(17,10,6, [6,5,  6,4,5,1,
+                                         4,3,  6,4,3,3]);
+
+// trash mob and boss turn order counters
+translate([0,80,0]) token_tray(17,
+        [ 6,3,4,4,4,4,3,4,4,4,4
+*/
+
+// modifiers
+// +1,+1,+1, +2,+2, +3, +4, +5, +1Regen, +2Regen, +3Regen
+// -1,-1,-1, -2,-2, -3, -4, -5, +1Regen, +2Regen, +4Regen
+// token_tray(17,12.2,11, [ 7,7,6, 7,6, 7, 3, 3,   7,4,6,
+//                          7,7,6, 7,6, 7, 3, 3,   7,4,4]);
 //standee_tray();
-single_layer_tray();
+//single_layer_tray(16.5,8,5);
+
+// 71 total player tokens (turn order and extra hero-specific tokens)
+// there are 2 extra tinker tokens because only 10 can be used at once
+// tray is 11,10,11,10,11,10,11 = 74 total so they will fit
+//single_layer_tray(16.5,11,7);
+
+scenario_tray();
+
+// fire: 16 trash mobs, 13 extra, 3 standee
+// ice: 16 trash mobs, 16 extra, 3 standee
+// forest: 16 trash mobs, 15 extra, 3 standee
+// water: 16 trash mobs, 9 extra
+
+// worst is 32 + 3 standees
+// m m m m  
+// m m m m
+// m m m m
+// m m m m
+
 
 
             
