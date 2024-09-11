@@ -103,9 +103,11 @@ module standee_tray(tokenDiam = 31,tokenHeight=41,depth = 7.5,columns = 5) {
     }
 }
 
-module scenario_tray(cardHeight=88.2,cardWidth=63,deckThick=16) {
+module scenario_tray(depths=[4,4,4,4,4,4],smallCards = 2,deckThick = 16,cardHeight=88.2,cardWidth=63) {
+    trayDepth = 10;
+    offsets = [ trayDepth, trayDepth - 1.8, trayDepth - 3.28,
+        trayDepth - 5, trayDepth - 6.6, trayDepth - 8.2, 0 ];
     floorDepth = 0.6;
-    trayDepth = 6.6;
     wall = 1;
     margin = 2;
     width = cardHeight + margin + wall*2;
@@ -117,21 +119,34 @@ module scenario_tray(cardHeight=88.2,cardWidth=63,deckThick=16) {
     difference() {
         cube([width,height,totalDepth]);
         translate([0,0,floorDepth]) {
-            for (i=[0:3]) {
-                translate([(width/4)*i + width/8,tokenR-cutout,0]) 
-                    cylinder(h=trayDepth,d=tokenSize);
-            }
-            translate([wall,tokenSize,0]) {
+            translate([tokenR-cutout/2,tokenSize*1.5,offsets[depths[0]]-smallCards])
+                cylinder(h=trayDepth,d=tokenSize);
+            translate([width/2-2*(tokenSize+wall),tokenR-cutout,offsets[depths[1]]])
+                cylinder(h=trayDepth,d=tokenSize);
+            translate([width/2-(tokenSize+wall),tokenR-cutout,offsets[depths[2]]])
+                cylinder(h=trayDepth,d=tokenSize);
+            translate([width/2,tokenR-cutout,offsets[depths[3]]])
+                cylinder(h=trayDepth,d=tokenSize);
+            translate([width/2+(tokenSize+wall),tokenR-cutout,offsets[depths[4]]])
+                cylinder(h=trayDepth,d=tokenSize);
+            translate([width/2+2*(tokenSize+wall),tokenR-cutout,offsets[depths[5]]])
+                cylinder(h=trayDepth,d=tokenSize);
+            translate([width-tokenR+cutout/2,tokenSize*1.5,offsets[depths[6]]-smallCards])
+                cylinder(h=trayDepth,d=tokenSize);
+           translate([(width-41)/2,tokenSize,offsets[4]-smallCards]) {
                 difference() {
-                    cube([31,41,trayDepth]);
-                    translate([0,10,0]) cube([31,21,1.64]);
+                    cube([41,31,trayDepth]);
+                    translate([10,0,0]) cube([21,31,1.8]);
                 }
-                translate([32,0,0]) 
-                    cube([width-32-wall*2,height-tokenSize-wall,trayDepth]);
             }
+            if (smallCards)
+                translate([(width-66)/2,tokenSize,trayDepth-smallCards])
+                    cube([66,44,10]);
         }
         translate([wall,0,trayDepth]) 
             cube([cardHeight + margin,cardWidth + margin, deckThick+1]);
+        translate([0,0,trayDepth])
+            cube([width,tokenSize*2,deckThick+1]);
     }
     
     give = 0.2;
@@ -139,7 +154,7 @@ module scenario_tray(cardHeight=88.2,cardWidth=63,deckThick=16) {
     translate([-tol/2,height+4,0]) {
         margin = (wall+give)*2;
         difference() {
-            cube([tol + width,totalDepth + tol,tol + height]);
+            cube([tol + width,totalDepth + tol,wall + height]);
             translate([wall,wall,wall]) {
                 cube([width + give*2,totalDepth + give*2,tol + height]);
                 translate([width/2+give,totalDepth/2,height])
@@ -183,7 +198,10 @@ translate([0,80,0]) token_tray(17,
 // tray is 11,10,11,10,11,10,11 = 74 total so they will fit
 //single_layer_tray(16.5,11,7);
 
-scenario_tray();
+// scenario_tray();
+
+// Ice
+scenario_tray([4,4,5,6,5,4,4], 2, 13.5);
 
 // fire: 16 trash mobs, 13 extra, 3 standee
 // ice: 16 trash mobs, 16 extra, 3 standee
