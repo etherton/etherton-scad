@@ -9,10 +9,12 @@ card = 12.6/40;
 function sum(margin,list,stop) =
     margin + card*abs(list[stop]) + (stop? sum(margin,list,stop-1) : 0);
 
+function computeDepth(list) = sum(slop + wall,list,len(list)-1) + wallFront;
+
 module cardTray(label,wells) {
     margin = slop + wall;
     difference() {
-        cube([92,65,sum(margin,wells,len(wells)-1)+wallFront]);
+        cube([92,65,computeDepth(wells)]);
         translate([92/2,65/2,0]) scale([-1,1,1])
             linear_extrude(wallFront/2)
                 text(label,halign="center",valign="center");
@@ -134,9 +136,34 @@ module victoryPointsAndShips() {
      }
 }
 
-//rotate([90,0,0]) cardTray("Faderan",[3,5,5,7,7,7,12,]);
 
-rotate([90,0,0]) cardTray("Caylion",[3,5,5,7,7,7,-19]);
+
+faderanWells = [3,5,5,7,7,7,12];
+caylionWells = [3,5,5,7,7,7,-19];
+imdrilWells = [3,6,8,7,7,7,6];
+eniEtWells = [3,11,5,7,7,7];
+
+yengiiWells = [3,6,7,7,7,7,-14];
+kjasWells = [3,4,8,7,7,7];
+kitWells = [3,7,7, 7,7,7, 13,10];
+zethWells = [2,6,6, 7,7,7];
+
+unityWells = [3,8,4,7,7,7];
+
+colonyWells = [40];
+
+otherWells = [7,20,12];
+
+echo(computeDepth(faderanWells) + computeDepth(caylionWells) +
+    computeDepth(imdrilWells) + computeDepth(eniEtWells) +
+    computeDepth(yengiiWells) + computeDepth(kjasWells) +
+    computeDepth(kitWells) + computeDepth(zethWells) +
+    computeDepth(unityWells) + computeDepth(colonyWells) +
+    computeDepth(otherWells));
+
+//rotate([90,0,0]) cardTray("Faderan",);
+
+rotate([90,0,0]) cardTray("Caylion",caylionWells);
 
 // rotate([90,0,0]) roundTokens(6); // Kit - Orange
 
