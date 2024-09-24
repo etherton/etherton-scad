@@ -1,6 +1,31 @@
 // Sidereal Confluence
 
-wall = 0.6;
+floorDepth = 0.6;
+wall = 1;
+wallFront = 1.2;
+slop = 1.4;
+card = 12.6/40;
+
+function sum(margin,list,stop) =
+    margin + card*abs(list[stop]) + (stop? sum(margin,list,stop-1) : 0);
+
+module cardTray(label,wells) {
+    margin = slop + wall;
+    difference() {
+        cube([92,65,sum(margin,wells,len(wells)-1)+wallFront]);
+        translate([92/2,65/2,0]) scale([-1,1,1])
+            linear_extrude(wallFront/2)
+                text(label,halign="center",valign="center");
+        translate([92/2,0,-1]) scale([0.75,1,1]) cylinder(99,16,16,$fn=60);
+        translate([92/2,65,-1]) cylinder(99,20,20,$fn=60);
+        for (i=[0:len(wells)-1]) {
+            inX = wells[i] > 0? wall :(92-69)/2;
+            inY = wells[i] > 0? floorDepth : (65-45);
+            translate([inX,inY,wallFront+(i?sum(margin,wells,i-1):0)])
+                cube([wells[i]>0?92-wall-wall : 69,99,(card*abs(wells[i]))+slop]);
+        }
+    }
+}
 
 module roundTokens(bays,d=27.8,heights=[19.8]) {
     difference() {
@@ -22,22 +47,22 @@ module roundTokens(bays,d=27.8,heights=[19.8]) {
     }
 }
 
-module squareTokens() {
+module faderonTokens() {
     difference() {
         d = 27.8;
         d2 = 25;
-        totalWidth = ((d+wall)*3 + (d2+wall)) + wall;
+        totalWidth = ((d+wall)*3 + (d2+wall)*2) + wall;
         echo(totalWidth);
         cube([totalWidth,d + wall,13+wall*2]);
         for (i=[0:2]) {
-            translate([wall+(d+wall)*i,wall,wall]) cube([d,99,i!=2?13:4.6]);
+            translate([wall+(d+wall)*i,wall,wall]) cube([d,99,i!=2?11.2:8.8]);
             translate([wall+d/2 + (d+wall)*i,d,-1]) cylinder(h=99,d=d*0.75);
         }
-        translate([wall+(d+wall)*2 + (d-d2)/2,wall+(d-d2),wall+4.6])
-            cube([d2,99,13-4.6]);
         o = (d+wall)*3 + wall;
-        translate([o,wall+(d-d2),wall]) cube([d2,99,11.4]);
-        translate([o+d2/2,d,-1]) cylinder(h=99,d=d2*0.75);
+        for (i=[0:1]) {
+            translate([o+(d2+wall)*i,wall+(d-d2),wall]) cube([d2,99,i!=1?13:11]);
+            translate([o+d2/2 + (d2+wall)*i,d,-1]) cylinder(h=99,d=d2*0.75);
+        }
     }
 }
 
@@ -60,7 +85,7 @@ module caylionTokens() {
     }
 }
 
-module resourceTray() {
+module bigResourceTray() {
     difference() {
         cube([88*3+wall*4,64.2,13]);
         for (i=[0:2]) {
@@ -71,11 +96,32 @@ module resourceTray() {
     }
 }
 
+module miscTray(x,y,z) {
+    difference() {
+        cube([x,y,z]);
+        translate([wall,wall,wall]) cube([x-wall*2,y-wall*2,99]);
+    }
+}
+
+module smallResourceTray() {
+    difference() {
+        cube([88*3+wall*4,64.2,9]);
+        for (i=[0:3]) {
+            cell = i!=3? 76 : 35.4;
+            translate([wall+(76+wall)*i,wall,wall]) cube([cell,63,99]);
+            if (i != 3)
+                translate([wall+(76+wall)*i+20,-1,6]) cube([36,99,99]);
+        }
+        translate([-1,20,6]) cube([300,24.2,99]);
+    }
+}
+
+
 module victoryPointsAndShips() {
-    wells = [33,22,11,32,24,30,30];
-    offsets = [0, 33+wall, 55+wall*2, 66+wall*3, 98+wall*4, 122+wall*5,
-        152+wall*6, 182+wall*7];
-    totalHeight = 182+wall*8;
+    wells = [33,22,11,33,24,30,28];
+    offsets = [0, 33+wall, 55+wall*2, 66+wall*3, 99+wall*4, 123+wall*5,
+        153+wall*6, 181+wall*7];
+    totalHeight = 181+wall*8;
     d=28;
     d2=27;
     difference() {
@@ -88,11 +134,15 @@ module victoryPointsAndShips() {
      }
 }
 
+//rotate([90,0,0]) cardTray("Faderan",[3,5,5,7,7,7,12,]);
+
+rotate([90,0,0]) cardTray("Caylion",[3,5,5,7,7,7,-19]);
+
 // rotate([90,0,0]) roundTokens(6); // Kit - Orange
 
 // rotate([90,0,0]) roundTokens(2); // Grand Fleet - Sky blue
 
-// rotate([90,0,0]) squareTokens(); // Faderon - Yellow
+// rotate([90,0,0]) faderonTokens(); // Faderon - Yellow
 
 // rotate([90,0,0]) caylionTokens(); // Caylion - Green
 
@@ -102,7 +152,12 @@ module victoryPointsAndShips() {
 
 //rotate([0,0,45]) resourceTray();
 
-rotate([0,0,45]) rotate([90,0,0]) victoryPointsAndShips();
+// rotate([0,0,45]) smallResourceTray();
+
+// rotate([0,0,45]) rotate([90,0,0]) victoryPointsAndShips();
+
+// miscTray(81,81,13);
+//miscTray(81,81,31-13);
 
 // x5 trays
 /*rotate([90,0,0]) difference() {
