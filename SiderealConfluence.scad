@@ -1,18 +1,19 @@
 // Sidereal Confluence
 
 floorDepth = 0.6;
-wall = 1;
+wall = 0.6;
 wallFront = 1.2;
-slop = 1.4;
+slop = 1; // 1.4;
 card = 12.6/40;
 
-function sum(margin,list,stop) =
-    margin + card*abs(list[stop]) + (stop? sum(margin,list,stop-1) : 0);
+function sum(margin,list,stop,thick) =
+    margin + thick*abs(list[stop]) + (stop? sum(margin,list,stop-1,thick) : 0);
 
-function computeDepth(list) = sum(slop + wall,list,len(list)-1) + wallFront;
+function computeDepth(list) = sum(slop + wall,list,len(list)-1,card) + wallFront;
 
 module cardTray(label,wells) {
     margin = slop + wall;
+    cardThick = 12.6/40;
     difference() {
         cube([92,65,computeDepth(wells)]);
         translate([92/2,65/2,0]) scale([-1,1,1])
@@ -23,8 +24,9 @@ module cardTray(label,wells) {
         for (i=[0:len(wells)-1]) {
             inX = wells[i] > 0? wall :(92-69)/2;
             inY = wells[i] > 0? floorDepth : (65-45);
-            translate([inX,inY,wallFront+(i?sum(margin,wells,i-1):0)])
-                cube([wells[i]>0?92-wall-wall : 69,99,(card*abs(wells[i]))+slop]);
+            translate([inX,inY,wallFront+(i?sum(margin,wells,i-1,cardThick):0)])
+                cube([wells[i]>0?92-wall-wall : 69,99,
+                    (cardThick*abs(wells[i]))+slop]);
         }
     }
 }
@@ -36,7 +38,7 @@ module roundTokens(bays,d=27.8,heights=[19.8]) {
         cube([totalWidth,d + wall,heights[0]+wall*2]);
         for (i=[0:bays-1]) {
             h = len(heights)>1? heights[i] : heights[0];
-            x = i * (d + 0.6) + 0.6;
+            x = i * (d + wall) + wall;
             if (i!=5) {
                 translate([x+d/2,d/2+1,wall]) cylinder(h=h,d=d);
                 translate([x,d/2+1,wall]) cube([d,99,h]);
@@ -46,6 +48,20 @@ module roundTokens(bays,d=27.8,heights=[19.8]) {
             }
             translate([x+d/2,d,-1]) cylinder(h=99,d=d*0.75);
         }
+    }
+}
+
+module squareTokens(bays,d=27.8,heights=[19.8]) {
+    difference() {
+        totalWidth = (d + wall)*bays + wall;
+        echo(totalWidth);
+        cube([totalWidth,d + wall,heights[0]+wall*2]);
+        for (i=[0:bays-1]) {
+            h = len(heights)>1? heights[i] : heights[0];
+            x = i * (d + wall) + wall;
+            translate([x,wall,wall]) cube([d,99,h]);
+            translate([x+d/2,d,-1]) cylinder(h=99,d=d*0.75);
+         }
     }
 }
 
@@ -87,6 +103,24 @@ module caylionTokens() {
     }
 }
 
+module caylionTokens2() {
+    d=28.2;
+    d2=28;
+    totalWidth = wall + d + (d2+wall)*3 + wall;
+    echo(totalWidth);
+    difference() {
+        cube([totalWidth,d+wall,13 + wall*2]);
+        // x2 tokens
+        translate([wall,d/2+1,wall]) cube([d,99,13]);
+        translate([wall+d/2,wall+d/2,wall]) cylinder(h=13,d=d);
+        translate([wall+d/2,d,-1]) cylinder(h=99,d=d*0.75);
+        // votes
+        for (i=[0:2]) {
+            translate([wall+d+wall+(i*(d2+wall)),wall,wall]) cube([d2,99,i==2?11.2:13]);
+            translate([wall+d+wall+(i*(d2+wall)+d2/2),d,-1]) cylinder(h=99,d=d*0.75);
+        }
+    }
+}
 module bigResourceTray() {
     difference() {
         cube([88*3+wall*4,64.2,13]);
@@ -120,18 +154,19 @@ module smallResourceTray() {
 
 
 module victoryPointsAndShips() {
-    wells = [33,22,11,33,24,30,28];
-    offsets = [0, 33+wall, 55+wall*2, 66+wall*3, 99+wall*4, 123+wall*5,
-        153+wall*6, 181+wall*7];
-    totalHeight = 181+wall*8;
+    tokenThick = 2.13;
+    wells = [15,10,5,15,  -11,-27];
+    tokenSlop = 0.6;
+    totalHeight = sum(wall + tokenSlop,wells,len(wells)-1,tokenThick) + wall;
     d=28;
     d2=27;
     difference() {
         cube([d+wall+wall,d*.55,totalHeight]);
         for (i=[0:len(wells)-1])
-            translate([wall,wall,wall+offsets[i]]) {
-                translate([d/2,d/2,0]) cylinder(h=wells[i],d=(i<4?d:d2),$fn=(i<4)?30:6);
-                translate([0,d/2,0]) cube([d,99,wells[i]]);
+            translate([wall,wall,wall+i?sum(wall+tokenSlop,wells,i-1,tokenThick):0]) {
+                thisThick = tokenThick * wells[i] + tokenSlop;
+                translate([d/2,d/2,0]) cylinder(h=tthisThick,d=(wells[i]>0?d:d2),$fn=(wells[i]>0)?30:6);
+                translate([0,d/2,0]) cube([d,99,thisThick]);
             }
      }
 }
@@ -148,22 +183,29 @@ kjasWells = [3,4,8,7,7,7];
 kitWells = [3,7,7, 7,7,7, 13,10];
 zethWells = [2,6,6, 7,7,7];
 
-unityWells = [3,8,4,7,7,7];
+unityWells = [3,8,4,7,7,7,6];
 
-colonyWells = [40];
+// colonyWells = [40];
 
-otherWells = [7,20,12];
+otherWells = [40, 7,7,7,20,12];
 
 echo(computeDepth(faderanWells) + computeDepth(caylionWells) +
     computeDepth(imdrilWells) + computeDepth(eniEtWells) +
     computeDepth(yengiiWells) + computeDepth(kjasWells) +
     computeDepth(kitWells) + computeDepth(zethWells) +
-    computeDepth(unityWells) + computeDepth(colonyWells) +
+    computeDepth(unityWells) + 
     computeDepth(otherWells));
 
 //rotate([90,0,0]) cardTray("Faderan",);
 
-rotate([90,0,0]) cardTray("Caylion",caylionWells);
+//rotate([90,0,0]) cardTray("Caylion",caylionWells);
+//rotate([90,0,0]) cardTray("Zeth",zethWells);
+//rotate([90,0,0]) cardTray("Kjas",kjasWells);
+//rotate([90,0,0]) cardTray("Kit",kitWells);
+//rotate([90,0,0]) cardTray("Unity",unityWells);
+//rotate([90,0,0]) cardTray("Im'Dril",imdrilWells);
+
+// rotate([90,0,0]) squareTokens(3,27.8,[19.8,19.8,11.2]);
 
 // rotate([90,0,0]) roundTokens(6); // Kit - Orange
 
@@ -171,7 +213,7 @@ rotate([90,0,0]) cardTray("Caylion",caylionWells);
 
 // rotate([90,0,0]) faderonTokens(); // Faderon - Yellow
 
-// rotate([90,0,0]) caylionTokens(); // Caylion - Green
+//rotate([90,0,0]) caylionTokens2(); // Caylion - Green
 
 // rotate([90,0,0]) roundTokens(2,27.8,[19.8,17.6]); // Eni Et Service Tokens
 
@@ -181,10 +223,12 @@ rotate([90,0,0]) cardTray("Caylion",caylionWells);
 
 // rotate([0,0,45]) smallResourceTray();
 
-// rotate([0,0,45]) rotate([90,0,0]) victoryPointsAndShips();
+//rotate([0,0,45]) rotate([90,0,0]) 
+victoryPointsAndShips();
 
-// miscTray(81,81,13);
+// miscTray(81,81,13); // ultratech and large wild
 //miscTray(81,81,31-13);
+// miscTray(85,29.2,55); // Filler
 
 // x5 trays
 /*rotate([90,0,0]) difference() {
