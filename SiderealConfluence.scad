@@ -4,23 +4,34 @@ floorDepth = 0.6;
 wall = 0.6;
 wallFront = 1.2;
 slop = 1; // 1.4;
-card = 12.6/40;
+cardThick = 12.6/40;
 
 function sum(margin,list,stop,thick) =
     margin + thick*abs(list[stop]) + (stop? sum(margin,list,stop-1,thick) : 0);
 
-function computeDepth(list) = sum(slop + wall,list,len(list)-1,card) + wallFront;
+function computeDepth(list) = sum(1 + 1,list,len(list)-1,cardThick) + wallFront;
 
 module cardTray(label,wells) {
+    slop = 1;
+    wall = 1;
     margin = slop + wall;
     cardThick = 12.6/40;
+    depth = computeDepth(wells);
     difference() {
-        cube([92,65,computeDepth(wells)]);
+        cube([92,65,depth]);
         translate([92/2,65/2,0]) scale([-1,1,1])
             linear_extrude(wallFront/2)
                 text(label,halign="center",valign="center");
-        translate([92/2,0,-1]) scale([0.75,1,1]) cylinder(99,16,16,$fn=60);
-        translate([92/2,65,-1]) cylinder(99,20,20,$fn=60);
+        translate([90,2,0]) scale([-1,1,1])
+            linear_extrude(wallFront/2)
+                text("dce",size=3);
+        translate([92/2,65,-1]) cylinder(99,16,16,$fn=60);
+        // translate([92,65/2,-1]) cylinder(99,15,15,$fn=60);
+        // translate([0,65/2,-1]) cylinder(99,15,15,$fn=60);
+        translate([92,0,depth/2]) rotate([0,0,45]) 
+            cube([20,20,depth-wall*2],center=true);
+        translate([0,0,depth/2]) rotate([0,0,45]) 
+            cube([20,20,depth-wall*2],center=true);
         for (i=[0:len(wells)-1]) {
             inX = wells[i] > 0? wall :(92-69)/2;
             inY = wells[i] > 0? floorDepth : (65-45);
@@ -47,6 +58,23 @@ module roundTokens(bays,d=27.8,heights=[19.8]) {
                 translate([x,wall,wall]) cube([d,99,h]);
             }
             translate([x+d/2,d,-1]) cylinder(h=99,d=d*0.75);
+        }
+    }
+}
+
+module zethTokens() {
+    d = 27.8;
+    difference() {
+        cube([wall*4 + d + 32 + 32,d + wall,19.8 + wall + wall]);
+        translate([wall+d/2,wall+14,wall]) cylinder(h=17.6,d=d);
+        translate([wall+d/2,wall+d,-1]) cylinder(h=30,d=20);
+        translate([wall,wall+14,wall]) cube([d,99,17.6]);
+        for (i=[0:1]) {
+            translate([wall+d+wall+i*(32+wall),wall,wall]) {
+                multmatrix([ [1,0,0,0], [0,1,0,0], [0,.3,1,0] ])
+                    cube([32,30,12]);
+                translate([14,28,-1]) cylinder(h=30,d=20);
+            }
         }
     }
 }
@@ -156,18 +184,21 @@ module smallResourceTray() {
 module victoryPointsAndShips() {
     tokenThick = 2.13;
     wells = [15,10,5,15,  -11,-27];
-    tokenSlop = 0.6;
+    tokenSlop = 0.4;
     totalHeight = sum(wall + tokenSlop,wells,len(wells)-1,tokenThick) + wall;
+    echo(totalHeight);
     d=28;
     d2=27;
     difference() {
         cube([d+wall+wall,d*.55,totalHeight]);
-        for (i=[0:len(wells)-1])
-            translate([wall,wall,wall+i?sum(wall+tokenSlop,wells,i-1,tokenThick):0]) {
-                thisThick = tokenThick * wells[i] + tokenSlop;
-                translate([d/2,d/2,0]) cylinder(h=tthisThick,d=(wells[i]>0?d:d2),$fn=(wells[i]>0)?30:6);
+        for (i=[0:len(wells)-1]) {
+            thisThick = tokenThick * abs(wells[i]) + tokenSlop;
+            translate([wall,wall,wall+(i?sum(wall+tokenSlop,wells,i-1,tokenThick):0)]) 
+        {
+                translate([d/2,d/2,0]) cylinder(h=thisThick,d=(wells[i]>0?d:d2),$fn=(wells[i]>0)?60:6);
                 translate([0,d/2,0]) cube([d,99,thisThick]);
             }
+        }
      }
 }
 
@@ -190,7 +221,7 @@ unityWells = [3,8,4,7,7,7,6];
 otherWells = [40, 7,7,7,20,12];
 
 echo(computeDepth(faderanWells) + computeDepth(caylionWells) +
-    computeDepth(imdrilWells) + computeDepth(eniEtWells) +
+    /* computeDepth(imdrilWells) + */ computeDepth(eniEtWells) +
     computeDepth(yengiiWells) + computeDepth(kjasWells) +
     computeDepth(kitWells) + computeDepth(zethWells) +
     computeDepth(unityWells) + 
@@ -199,11 +230,14 @@ echo(computeDepth(faderanWells) + computeDepth(caylionWells) +
 //rotate([90,0,0]) cardTray("Faderan",);
 
 //rotate([90,0,0]) cardTray("Caylion",caylionWells);
-//rotate([90,0,0]) cardTray("Zeth",zethWells);
+rotate([90,0,0]) cardTray("Zeth",zethWells);
 //rotate([90,0,0]) cardTray("Kjas",kjasWells);
 //rotate([90,0,0]) cardTray("Kit",kitWells);
 //rotate([90,0,0]) cardTray("Unity",unityWells);
 //rotate([90,0,0]) cardTray("Im'Dril",imdrilWells);
+//rotate([90,0,0]) cardTray("Eni Et",eniEtWells);
+//rotate([90,0,0]) cardTray("Yengii",yengiiWells);
+// rotate([90,0,0]) cardTray("Res Team",otherWells);
 
 // rotate([90,0,0]) squareTokens(3,27.8,[19.8,19.8,11.2]);
 
@@ -217,14 +251,19 @@ echo(computeDepth(faderanWells) + computeDepth(caylionWells) +
 
 // rotate([90,0,0]) roundTokens(2,27.8,[19.8,17.6]); // Eni Et Service Tokens
 
-// rotate([90,0,0]) roundTokens(2,32.0); // Zeth Tokens
+//rotate([90,0,0]) roundTokens(2,32.0); // Zeth Tokens
 
 //rotate([0,0,45]) resourceTray();
 
 // rotate([0,0,45]) smallResourceTray();
 
-//rotate([0,0,45]) rotate([90,0,0]) 
-victoryPointsAndShips();
+//rotate([0,0,45]) rotate([90,0,0]) victoryPointsAndShips();
+
+ miscTray(91,91,12); // Print two of these
+// miscTray(81,81,12); // ultratech and large wild
+// miscTray(27.8*2+wall*3,21,27.8+wall); // dice
+
+//rotate([90,0,0]) zethTokens();
 
 // miscTray(81,81,13); // ultratech and large wild
 //miscTray(81,81,31-13);
