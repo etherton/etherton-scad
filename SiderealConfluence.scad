@@ -16,27 +16,29 @@ module cardTray(label,wells) {
     wall = 1;
     margin = slop + wall;
     cardThick = 12.6/40;
+    bigWidth = 92.6;
+    bigHeight = 65;
     depth = computeDepth(wells);
     difference() {
-        cube([92,65,depth]);
-        translate([92/2,65/2,0]) scale([-1,1,1])
+        cube([bigWidth,bigHeight,depth]);
+        translate([bigWidth/2,bigHeight/2,0]) scale([-1,1,1])
             linear_extrude(wallFront/2)
                 text(label,halign="center",valign="center");
-        translate([90,2,0]) scale([-1,1,1])
+        /* translate([90,2,0]) scale([-1,1,1])
             linear_extrude(wallFront/2)
-                text("dce",size=3);
-        translate([92/2,65,-1]) cylinder(99,16,16,$fn=60);
+                text("dce",size=3); */
+        translate([bigWidth/2,bigHeight,-1]) cylinder(99,16,16,$fn=60);
         // translate([92,65/2,-1]) cylinder(99,15,15,$fn=60);
         // translate([0,65/2,-1]) cylinder(99,15,15,$fn=60);
-        translate([92,0,depth/2]) rotate([0,0,45]) 
-            cube([20,20,depth-wall*2],center=true);
+        //translate([bigWidth,0,depth/2]) rotate([0,0,45]) 
+         //   cube([20,20,99+depth-wall*2],center=true);
         translate([0,0,depth/2]) rotate([0,0,45]) 
-            cube([20,20,depth-wall*2],center=true);
+            cube([20,20,99+depth-wall*2],center=true);
         for (i=[0:len(wells)-1]) {
-            inX = wells[i] > 0? wall :(92-69)/2;
-            inY = wells[i] > 0? floorDepth : (65-45);
+            inX = wells[i] > 0? wall :(bigWidth-69)/2;
+            inY = wells[i] > 0? floorDepth : (bigHeight-45);
             translate([inX,inY,wallFront+(i?sum(margin,wells,i-1,cardThick):0)])
-                cube([wells[i]>0?92-wall-wall : 69,99,
+                cube([wells[i]>0?bigWidth-wall-wall : 69,99,
                     (cardThick*abs(wells[i]))+slop]);
         }
     }
@@ -227,17 +229,17 @@ echo(computeDepth(faderanWells) + computeDepth(caylionWells) +
     computeDepth(unityWells) + 
     computeDepth(otherWells));
 
-//rotate([90,0,0]) cardTray("Faderan",);
+//rotate([90,0,0]) cardTray("Faderan",faderanWells);
 
-//rotate([90,0,0]) cardTray("Caylion",caylionWells);
-rotate([90,0,0]) cardTray("Zeth",zethWells);
-//rotate([90,0,0]) cardTray("Kjas",kjasWells);
+// rotate([90,0,0]) cardTray("Caylion",caylionWells);
+// rotate([90,0,0]) cardTray("Zeth",zethWells);
+// rotate([90,0,0]) cardTray("Kjas",kjasWells);
 //rotate([90,0,0]) cardTray("Kit",kitWells);
-//rotate([90,0,0]) cardTray("Unity",unityWells);
-//rotate([90,0,0]) cardTray("Im'Dril",imdrilWells);
-//rotate([90,0,0]) cardTray("Eni Et",eniEtWells);
+// rotate([90,0,0]) cardTray("Unity",unityWells);
+// rotate([90,0,0]) cardTray("Im'Dril",imdrilWells);
+// rotate([90,0,0]) cardTray("Eni Et",eniEtWells);
 //rotate([90,0,0]) cardTray("Yengii",yengiiWells);
-// rotate([90,0,0]) cardTray("Res Team",otherWells);
+rotate([90,0,0]) cardTray("Res Team",otherWells);
 
 // rotate([90,0,0]) squareTokens(3,27.8,[19.8,19.8,11.2]);
 
@@ -259,8 +261,11 @@ rotate([90,0,0]) cardTray("Zeth",zethWells);
 
 //rotate([0,0,45]) rotate([90,0,0]) victoryPointsAndShips();
 
- miscTray(91,91,12); // Print two of these
-// miscTray(81,81,12); // ultratech and large wild
+// miscTray(91,91,12); // Print two of these
+//,miscTray(81,81,12); // ultratech and large wild
+// miscTray(88,88,12-wall); // first nested tray
+//miscTray(85,85,12-wall-wall); // second nested tray
+
 // miscTray(27.8*2+wall*3,21,27.8+wall); // dice
 
 //rotate([90,0,0]) zethTokens();
