@@ -37,9 +37,16 @@ module cardTray(label,wells) {
         for (i=[0:len(wells)-1]) {
             inX = wells[i] > 0? wall :(bigWidth-69)/2;
             inY = wells[i] > 0? floorDepth : (bigHeight-45);
-            translate([inX,inY,wallFront+(i?sum(margin,wells,i-1,cardThick):0)])
+            inZ = wallFront+(i?sum(margin,wells,i-1,cardThick):0);
+            translate([inX,inY,inZ])
                 cube([wells[i]>0?bigWidth-wall-wall : 69,99,
                     (cardThick*abs(wells[i]))+slop]);
+            if (i==len(wells)-1 && wells[i] < 0) {
+                translate([bigWidth/2,inY,inZ])
+                    cylinder(99,16,16,$fn=60);
+                translate([bigWidth/2-16,inY,inZ])
+                    cube([32,bigHeight,99]);
+            }
         }
     }
 }
@@ -231,15 +238,15 @@ echo(computeDepth(faderanWells) + computeDepth(caylionWells) +
 
 //rotate([90,0,0]) cardTray("Faderan",faderanWells);
 
-// rotate([90,0,0]) cardTray("Caylion",caylionWells);
+//rotate([90,0,0]) cardTray("Caylion",caylionWells);
 // rotate([90,0,0]) cardTray("Zeth",zethWells);
 // rotate([90,0,0]) cardTray("Kjas",kjasWells);
 //rotate([90,0,0]) cardTray("Kit",kitWells);
 // rotate([90,0,0]) cardTray("Unity",unityWells);
 // rotate([90,0,0]) cardTray("Im'Dril",imdrilWells);
 // rotate([90,0,0]) cardTray("Eni Et",eniEtWells);
-//rotate([90,0,0]) cardTray("Yengii",yengiiWells);
-rotate([90,0,0]) cardTray("Res Team",otherWells);
+rotate([90,0,0]) cardTray("Yengii",yengiiWells);
+// rotate([90,0,0]) cardTray("Res Team",otherWells);
 
 // rotate([90,0,0]) squareTokens(3,27.8,[19.8,19.8,11.2]);
 
