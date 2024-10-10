@@ -39,18 +39,20 @@ module hexTray() {
 }
 
 module cardTray() {
+    multmatrix([[1 ,0 ,0, 0], [0, 1, 0, 0], [0, .4, 1, 0]])
     difference() {
-        slots = 12;
-        size = 8;
-        depth = (size + wall) * slots + wall;
-        cube([93+wall*2,66 + wall,depth]);
-        for (i=[0:slots-1]) {
-            translate([wall,wall,wall + i * (size + wall)]) {
-                cube([93,99,8]);
-                translate([31,-wall*2,0]) cube([31,wall*4,size]);
+        wells = [ 5, 9, 9, 6, 6, 6, 6, 6, 6, 6, 6, 6 ];
+        wall = 0.6;
+        depth = sum(wall, wells, len(wells)-1, 1) + wall; 
+        cube([93+wall*2,60.5 + wall,depth]);
+        for (i=[0:len(wells)-1]) {
+            z = wall + (i? sum(wall,wells,i-1,1) : 0);
+            translate([wall,wall,z]) {
+                cube([93,99,wells[i]]);
+                translate([31,-wall*2,0]) cube([31,wall*4,wells[i]]);
             }
         }
-        translate([(93+wall*2)/2,66+wall,-1]) cylinder(h=depth*2,d=50);
+        translate([(93+wall*2)/2,60.5+wall,-1]) cylinder(h=depth*2,d=50);
         //translate([0,0,-1]) rotate([0,0,45]) cube([30,30,depth*3],center=true);
     }
 }
