@@ -9,8 +9,8 @@ module trayOne() {
         translate([44,height-14,depth-14.6]) cylinder(h=depth,d=30.4);
         translate([74,height-14,depth-14.6]) cylinder(h=depth,d=30.4);
         translate([66,-2,4]) rotate([0,0,10]) cube([20.4,20.4,depth]);
-        translate([16,8,depth-14]) cylinder(h=depth,d=27,$fn=6);
-        translate([46,8,depth-12]) cylinder(h=depth,d=27,$fn=6);
+        translate([16,8,depth-14]) cylinder(h=depth,d=depth,$fn=6);
+        translate([46,8,depth-12]) cylinder(h=depth,d=depth,$fn=6);
     }
 }
 
