@@ -58,6 +58,49 @@ module resourceTray() {
     }
 }
 
-resourceTray();
+//resourceTray();
 
 //cornerBox();
+
+module captainBox(nw) {
+    thick = 35.4 - wall * 2 - 0.4;
+    cell = (thick - ((nw+1) * wall)) / nw;
+    difference() {
+        cube([90+wall*2,thick,65+wall*2]);
+        for (i=[0:nw-1]) {
+            translate([wall,wall+i*(wall+cell),flr])
+                cube([90,cell,99]);
+        }
+        translate([35,-1,30]) cube([20,99,99]);
+        translate([45,-1,30]) rotate([-90,0,0]) cylinder(h=99,d=20);
+    }
+    
+    translate([0,40,0]) difference() {
+        cube([90+wall*2+0.4+wall*2,35.4,65+wall*2+0.4+wall*2]);
+        translate([wall,wall,flr]) cube([90+wall*2+0.4,35.4-wall*2,65+wall*4]);
+        translate([45+wall*2+0.2,-1,68]) rotate([-90,0,0]) cylinder(h=99,d=30);
+    }
+}
+
+//captainBox(3);
+//captainBox(4);
+
+function sum(margin,list,stop) =
+    margin + list[stop] + (stop? sum(margin,list,stop-1) : 0);
+
+
+module moneyBox() {
+    margin = 4;
+    wells = [8,5,5,4,3,2];
+    multmatrix([[1 ,0 ,0, 0], [0, 1, 0.4, 0], [0, 0, 1, 0]]) difference() {
+        cube([103+wall*2,wall+sum(margin+wall,wells,len(wells)-1),49]);
+        for(i=[0:len(wells)-1])
+            translate([wall,wall+(i?sum(margin+wall,wells,i-1):0),flr]) 
+                cube([103,margin+wells[i],99]);
+        translate([(103+wall*2)/2,-1,48]) rotate([-90,0,0]) cylinder(h=99,d=60);
+    }
+}
+
+// rotate([17,0,0]) 
+moneyBox();
+
