@@ -63,10 +63,12 @@ module resourceTray() {
 //cornerBox();
 
 module captainBox(nw) {
-    thick = 35.4 - wall * 2 - 0.4;
+    gap = 0.8;
+    thick = 35.4 - wall * 2 - gap;
     cell = (thick - ((nw+1) * wall)) / nw;
+    echo(cell);
     difference() {
-        cube([90+wall*2,thick,65+wall*2]);
+        cube([90+wall*2,thick,68+wall]);
         for (i=[0:nw-1]) {
             translate([wall,wall+i*(wall+cell),flr])
                 cube([90,cell,99]);
@@ -75,15 +77,15 @@ module captainBox(nw) {
         translate([45,-1,30]) rotate([-90,0,0]) cylinder(h=99,d=20);
     }
     
-    translate([0,40,0]) difference() {
-        cube([90+wall*2+0.4+wall*2,35.4,65+wall*2+0.4+wall*2]);
-        translate([wall,wall,flr]) cube([90+wall*2+0.4,35.4-wall*2,65+wall*4]);
-        translate([45+wall*2+0.2,-1,68]) rotate([-90,0,0]) cylinder(h=99,d=30);
+    translate([-wall-gap/2,40,0]) difference() {
+        cube([90+wall*2+gap+wall*2,35.4,68+wall*2]);
+        translate([wall,wall,flr]) cube([90+wall*2+gap,35.4-wall*2,99]);
+        translate([45+wall*2+gap/2,-1,70]) rotate([-90,0,0]) cylinder(h=99,d=30);
     }
 }
 
-//captainBox(3);
-//captainBox(4);
+// captainBox(3);
+captainBox(4);
 
 function sum(margin,list,stop) =
     margin + list[stop] + (stop? sum(margin,list,stop-1) : 0);
@@ -102,5 +104,5 @@ module moneyBox() {
 }
 
 // rotate([17,0,0]) 
-moneyBox();
+//moneyBox();
 
