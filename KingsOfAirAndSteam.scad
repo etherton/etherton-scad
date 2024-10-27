@@ -85,7 +85,7 @@ module captainBox(nw) {
 }
 
 // captainBox(3);
-captainBox(4);
+//captainBox(4);
 
 function sum(margin,list,stop) =
     margin + list[stop] + (stop? sum(margin,list,stop-1) : 0);
@@ -106,3 +106,8 @@ module moneyBox() {
 // rotate([17,0,0]) 
 //moneyBox();
 
+// spacer
+difference() {
+    cube([58,30,30]);
+    translate([wall,wall,-1]) cube([58-wall*2,30-wall*2,99]);
+}
