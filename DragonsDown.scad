@@ -1,3 +1,7 @@
+
+
+
+
 module terrainTray() {
     chips = 12.4; // 12.2 + slop
     terrain = 12.6; // 12.4 + 
@@ -58,6 +62,12 @@ module chipTray() {
             }
         }
     }
+    for (i=[0:3]) {
+        for (j=[0:3]) {
+            translate([1+i*40.4+20.2,j*(127/3),20+0.6]) 
+                rotate([-90,0,0]) difference() { cylinder(d=40.4,h=1,$fn=60); cylinder(d=27,h=1); }
+        }
+    }
 }
 
 // chipTray();
@@ -106,4 +116,32 @@ module cubeDiceTray() {
     }
 }
 
-cubeDiceTray();
+// cubeDiceTray();
+
+module cardTray() {
+    rad=3;
+    module roundedCube(vec) {
+        hull() {
+            translate([rad,rad,0]) cylinder(h=vec.z,r=rad);
+            translate([rad,vec.y-rad,0]) cylinder(h=vec.z,r=rad);
+            translate([vec.x-rad,vec.y-rad,0]) cylinder(h=vec.z,r=rad);
+            translate([vec.x-rad,rad,0]) cylinder(h=vec.z,r=rad);
+        }
+    }
+    difference() {
+        roundedCube([136,128,45]);
+        translate([1,1,0.6]) roundedCube([36,91,99]);
+        translate([99,36,0.6]) roundedCube([36,91,99]);
+        //translate([93,1,0.6]) roundedCube([48,40,99]);
+        //translate([93,41,0.6]) roundedCube([44,40,99]);
+        translate([1,93,0.6]) roundedCube([48,34,99]);
+        translate([50,93,0.6]) roundedCube([48,34,99]);
+        translate([87,1,0.6]) roundedCube([48,34,99]);
+        translate([38,1,0.6]) roundedCube([48,34,99]);
+        translate([38,36,0.6]) roundedCube([48,20,99]);
+        translate([38,57,0.6]) roundedCube([48,35,99]);
+        translate([87,36,0.6]) roundedCube([10,56,99]);
+    }
+}
+
+cardTray();
