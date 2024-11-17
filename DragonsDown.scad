@@ -97,26 +97,31 @@ module cubeDiceTray() {
             translate([rad,h-rad,99]) sphere(rad);
         }
     }
+    module roundedWell2(x,y,label,w,h,thick = 1.2,so = 8) {
+        if (len(label)) translate([x+w/2,y+h/2,thick-0.6]) linear_extrude(10) 
+            text(label,halign="center",valign="center",size = so);
+        translate([x,y,thick]) roundedWell(w,h);
+    }
     difference() {
         roundedCube([150,170,22.4]);
         translate([1,170-41,0.6]) roundedCube([31,40,99]);
         translate([1+5,170-41+5,-1]) roundedCube([21,30,99]);
-        translate([1,170-61,0.6]) roundedWell(31,19);
-        translate([33,170-61,0.6]) roundedWell(37,60);
-        translate([33+37+1,170-61,0.6]) roundedWell(77,60);
+        roundedWell2(1,170-61,"d6",31,19,8);
+        roundedWell2(33,170-61,"\u2665",32,60,5,20);
+        roundedWell2(66,170-61,"Dice",83,60,8);
         for (i=[0:1]) {
             for (j=[0:3]) {
                 translate([1+j*((150-5)/4+1),47+31*i,0.6]) roundedWell(145/4,30);
             }
         }
-        translate([1,1,0.6]) roundedWell(44,45);
-        translate([46,1,0.6]) roundedWell(51,45);
-        translate([98,1,0.6]) roundedWell(51,45);
+        roundedWell2(1,1,"Might",44,45);
+        roundedWell2(46,1,"Speed",51,45);
+        roundedWell2(98,1,"Status",51,45);
         
     }
 }
 
-// cubeDiceTray();
+cubeDiceTray();
 
 module cardTray() {
     rad=3;
@@ -247,7 +252,7 @@ module cardTray2() {
     }
 }
 
-cardTray2();
+// cardTray2();
 
 /* difference() {
     sizes = [ 25.4, 25.6, 25.8, 26 ];
