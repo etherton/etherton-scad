@@ -144,4 +144,168 @@ module cardTray() {
     }
 }
 
-cardTray();
+// cardTray();
+
+module tokenTray2() {
+    rad=3;
+    module roundedCube(vec) {
+        hull() {
+            translate([rad,rad,0]) cylinder(h=vec.z,r=rad);
+            translate([rad,vec.y-rad,0]) cylinder(h=vec.z,r=rad);
+            translate([vec.x-rad,vec.y-rad,0]) cylinder(h=vec.z,r=rad);
+            translate([vec.x-rad,rad,0]) cylinder(h=vec.z,r=rad);
+        }
+    }
+
+    difference() {
+        roundedCube([27*4+1,128,27]);
+        for (i=[0:3]) {
+            for (j=[0:3]) {
+                translate([27*i+14,27*j+14,0]) { 
+                    cylinder(h=0.6,d=20); translate([0,0,0.6]) cylinder(h=99,d=26.2);
+                }
+            }
+            translate([27*i+14,107.8,0.6+13]) rotate([-90,0,0]) cylinder(h=19.2,d=26.2);
+            translate([27*i+1,107.8,0.6+13]) cube([26.2,19.2,99]);
+            translate([27*i+14,107.8,0.6+13]) rotate([-90,0,0]) cylinder(h=21.2,d=18);
+            translate([27*i+1+4,107.8,0.6+13]) cube([18,21.2,99]);
+        }
+    }
+}
+
+// tokenTray2();
+
+module chipTray2() {
+    rad=3;
+    module roundedCube(vec) {
+        hull() {
+            translate([rad,rad,0]) cylinder(h=vec.z,r=rad);
+            translate([rad,vec.y-rad,0]) cylinder(h=vec.z,r=rad);
+            translate([vec.x-rad,vec.y-rad,0]) cylinder(h=vec.z,r=rad);
+            translate([vec.x-rad,rad,0]) cylinder(h=vec.z,r=rad);
+        }
+    }
+
+    difference() {
+        roundedCube([142,128,21 /*68-27*/]);
+        for (i=[0:6]) {
+            for (j=[0:2]) {
+                translate([i*20.5+2,22+42*j,0.6+20.2]) rotate([0,90,0]) 
+                    cylinder(h=i==6?15:19.5,d=40.4,$fn=60);
+            }
+        }
+    }
+}
+
+// chipTray2();
+
+module cardTray2() {
+    rad=3;
+    module roundedCube(vec) {
+        hull() {
+            translate([rad,rad,0]) cylinder(h=vec.z,r=rad);
+            translate([rad,vec.y-rad,0]) cylinder(h=vec.z,r=rad);
+            translate([vec.x-rad,vec.y-rad,0]) cylinder(h=vec.z,r=rad);
+            translate([vec.x-rad,rad,0]) cylinder(h=vec.z,r=rad);
+        }
+    }
+    difference() {
+        roundedCube([160,128,45]);
+        translate([1,1,0.6]) roundedCube([48,13,99]); // starting spell
+        translate([1,15,0.6]) roundedCube([48,13,99]); // spell
+        translate([1,29,0.6]) roundedCube([48,32,99]); // item
+        
+        translate([50,1,0.6]) roundedCube([48,35,99]); // treasure
+        translate([50,37,0.6]) roundedCube([48,18,99]); // deep treasure
+        translate([50,56,0.6]) roundedCube([48,13,99]); // mission
+        
+        translate([1,121,0.6]) roundedCube([97,6,99]); // ref cards
+        translate([1,110,0.6]) roundedCube([97,10,99]); // class cards
+        translate([1,99,0.6]) roundedCube([97,10,99]); // species cards
+       
+        /* translate([1,1,0.6]) roundedCube([36,91,99]);
+        translate([99,36,0.6]) roundedCube([36,91,99]);
+        //translate([93,1,0.6]) roundedCube([48,40,99]);
+        //translate([93,41,0.6]) roundedCube([44,40,99]);
+        translate([1,93,0.6]) roundedCube([48,34,99]);
+        translate([50,93,0.6]) roundedCube([48,34,99]);
+        translate([87,1,0.6]) roundedCube([48,34,99]);
+        translate([38,1,0.6]) roundedCube([48,34,99]);
+        translate([38,36,0.6]) roundedCube([48,20,99]);
+        translate([38,57,0.6]) roundedCube([48,35,99]);
+        translate([87,36,0.6]) roundedCube([10,56,99]); */
+    }
+}
+
+//cardTray2();
+
+/* difference() {
+    sizes = [ 25.4, 25.6, 25.8, 26 ];
+    cube([120,30,2.4]);
+    for (i=[0:3]) {
+        translate([14+ 28*i,15,0]) { cylinder(h=1,d=20); translate([0,0,0.4]) cylinder(h=2,d=sizes[i]);
+        }
+    }
+}*/
+
+module playerTokens() {
+    rad=20;
+    module roundedCube(vec) {
+        hull() {
+            translate([rad,rad,0]) cylinder(h=vec.z,r=rad);
+            translate([rad,vec.y-rad,0]) cylinder(h=vec.z,r=rad);
+            translate([vec.x-rad,vec.y-rad,0]) cylinder(h=vec.z,r=rad);
+            translate([vec.x-rad,rad,0]) cylinder(h=vec.z,r=rad);
+        }
+    }
+    difference() {
+        roundedCube([160,128,2.6]);
+        cx = 26.4;
+        cy = 27;
+        ix = 0.6;
+        iy = 1.4;
+        td = 25.9;
+        for (j=[0:2]) {
+            for (i=[0:4]) {
+                translate([ix+i*cx + cx,j*cy*1.8+cy/2 + iy,-1]) {
+                    cylinder(h=1.6,d=20);
+                    translate([0,0,1.6]) cylinder(h=5,d=td);
+                }
+            }
+        }
+        for (j=[0:1]) {
+            for (i=[0:5]) {
+                translate([ix+i*cx + cx/2,cy*1.4+j*cy*1.8 + iy,-1]) {
+                    cylinder(h=1.6,d=20);
+                    translate([0,0,1.6]) cylinder(h=5,d=td);
+                }
+            }
+        }
+    }
+}
+
+playerTokens();
+
+module tokenTray3() {
+    rad=3;
+    module roundedCube(vec) {
+        hull() {
+            translate([rad,rad,0]) cylinder(h=vec.z,r=rad);
+            translate([rad,vec.y-rad,0]) cylinder(h=vec.z,r=rad);
+            translate([vec.x-rad,vec.y-rad,0]) cylinder(h=vec.z,r=rad);
+            translate([vec.x-rad,rad,0]) cylinder(h=vec.z,r=rad);
+        }
+    }
+    difference() {
+        roundedCube([142,64,14]);
+        for (i=[0:4])
+            translate([i*28+15,2,13.6]) rotate([-90,0,0]) cylinder(d=26,h=60);
+    }
+}
+
+/* difference() {
+    cylinder(h=2,d=25.6);
+    translate([-14,0,0]) cube([30,25.6/2,2]);
+} */
+
+//tokenTray3();
