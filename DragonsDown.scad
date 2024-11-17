@@ -209,20 +209,30 @@ module cardTray2() {
             translate([vec.x-rad,rad,0]) cylinder(h=vec.z,r=rad);
         }
     }
+    module roundedCube2(x,y,label,vec) {
+        if (len(label)) translate([x+vec.x/2,y+vec.y/2,0.61]) linear_extrude(10) 
+            text(label,halign="center",valign="center",size = vec.y < 20? 5 : 8);
+        translate([x,y,1.21]) roundedCube(vec);
+    }
     difference() {
-        roundedCube([160,128,45]);
-        translate([1,1,0.6]) roundedCube([48,13,99]); // starting spell
-        translate([1,15,0.6]) roundedCube([48,13,99]); // spell
-        translate([1,29,0.6]) roundedCube([48,32,99]); // item
+        roundedCube([160,128,32]);
+        roundedCube2(1,1,"Starting Spell",[48,13,99]); // starting spell
+        roundedCube2(1,15,"Spell",[48,13,99]); // spell
+        roundedCube2(1,29,"Items",[48,32,99]); // item
+        roundedCube2(1,62,"",[48,7,99]); // extra
+        roundedCube2(1,70,"",[48,13,99]); // extra
+        roundedCube2(50,70,"",[48,13,99]); // extra
         
-        translate([50,1,0.6]) roundedCube([48,35,99]); // treasure
-        translate([50,37,0.6]) roundedCube([48,18,99]); // deep treasure
-        translate([50,56,0.6]) roundedCube([48,13,99]); // mission
+        roundedCube2(50,1,"Treasure",[48,35,99]); // treasure
+        roundedCube2(50,37,"Deep Treasure",[48,18,99]); // deep treasure
+        roundedCube2(50,56,"Mission",[48,13,99]); // mission
         
-        translate([1,121,0.6]) roundedCube([97,6,99]); // ref cards
-        translate([1,110,0.6]) roundedCube([97,10,99]); // class cards
-        translate([1,99,0.6]) roundedCube([97,10,99]); // species cards
+        roundedCube2(1,121,"Reference",[97,6,99]); // ref cards
+        roundedCube2(1,110,"Class",[97,10,99]); // class cards
+        roundedCube2(1,99,"Lineage",[97,10,99]); // lineage cards
+        roundedCube2(1,84,"",[97,14,99]); // extra
        
+        roundedCube2(99,1,"Misc",[60,126,99]); // extra
         /* translate([1,1,0.6]) roundedCube([36,91,99]);
         translate([99,36,0.6]) roundedCube([36,91,99]);
         //translate([93,1,0.6]) roundedCube([48,40,99]);
@@ -237,7 +247,7 @@ module cardTray2() {
     }
 }
 
-//cardTray2();
+cardTray2();
 
 /* difference() {
     sizes = [ 25.4, 25.6, 25.8, 26 ];
@@ -284,7 +294,7 @@ module playerTokens() {
     }
 }
 
-playerTokens();
+//playerTokens();
 
 module tokenTray3() {
     rad=3;
