@@ -1,11 +1,12 @@
 
-diameter = 25; // [25,45,50]
+diameter = 25; // [25,45,50,60]
 
 slots = 3; // [1,2,3,4,5,6,7,8]
 
 $fn=60;
 
 module ring(diam,wells) {
+    $fn = 60;
     difference() {
         cylinder(d=diam+4,h=3);
         translate([0,0,-1]) cylinder(d=diam-11,h=5);
@@ -15,7 +16,7 @@ module ring(diam,wells) {
         th = 2.4;
         wa = 0.8;
         difference() {
-            translate([0,-11,0]) cube([th*3+wa*4,22,6]);
+            translate([0,-11,0]) cube([th*wells+wa*(wells+1),22,6]);
             for (i=[0:wells-1])
                 translate([wa + i * (th+wa),0,10]) rotate([0,90,0]) cylinder(d=21,h=th);
         }
