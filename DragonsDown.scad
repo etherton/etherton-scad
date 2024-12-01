@@ -121,7 +121,7 @@ module cubeDiceTray() {
     }
 }
 
-cubeDiceTray();
+//cubeDiceTray();
 
 module cardTray() {
     rad=3;
@@ -324,3 +324,59 @@ module tokenTray3() {
 } */
 
 //tokenTray3();
+
+
+module cardTray3() {
+    rad=2;
+    module roundedCube(vec) {
+        hull() {
+            translate([rad,rad,0]) cylinder(h=vec.z,r=rad);
+            translate([rad,vec.y-rad,0]) cylinder(h=vec.z,r=rad);
+            translate([vec.x-rad,vec.y-rad,0]) cylinder(h=vec.z,r=rad);
+            translate([vec.x-rad,rad,0]) cylinder(h=vec.z,r=rad);
+        }
+    }
+    module well(x,y, w,h, step=6) {
+        translate([x,y,0.6]) cube([w,h,99]);
+        for (i=[0:floor((h-step)/step)]) {
+            translate([x-1.2,step/2+i*step+y,13.6]) cube([w+2.4,1.8,99]);
+            if (w > 50)
+                translate([x+w/2-6,step/2+i*step+y,0]) cube([12,1.8,99]);
+        }
+    }
+    difference() {
+        roundedCube([159,128,30]);
+        well(3,68, 101,58);
+        well(3,2, 49,64);
+        well(55,2, 49,64);
+        well(107,2, 49,124);
+
+     }
+}
+
+cardTray3();
+
+/* module cardDivider(w) {
+    rad=1;
+    linear_extrude(0.8) {
+        offset(r=rad) {
+            polygon([ [0.2+rad,0+rad], [w-0.2-rad,0+rad], [w-0.2-rad,10+rad], [w+0.5-rad,10+rad], [w+0.5-rad,30-rad], 49
+            [-0.5+rad,30-rad], [-0.5+rad,10+rad], [0.2+rad,10+rad] ]);
+        }
+    }
+} */
+
+/* union() {
+    cube([49+1.6,16,1.6]);
+    translate([1,0,0]) cube([48.6,28,1.6]);
+} */
+
+/* union() {
+    cube([101+1.6,15,1.6]);
+    translate([1,0,0]) cube([100.6,29,1.6]);
+    translate([102.6/2-5,0,0]) cube([10,29.8,1.6]);
+} */
+
+// cardDivider(50.66);
+//cardDivider(103);
+
