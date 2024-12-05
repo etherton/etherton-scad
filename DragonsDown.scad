@@ -299,7 +299,43 @@ module playerTokens() {
     }
 }
 
-//playerTokens();
+module playerTokensCard() {
+    rad=3;
+    td = 25.9;
+    module roundedCube(vec) {
+        hull() {
+            translate([rad,rad,0]) cylinder(h=vec.z,r=rad);
+            translate([rad,vec.y-rad,0]) cylinder(h=vec.z,r=rad);
+            translate([vec.x-rad,vec.y-rad,0]) cylinder(h=vec.z,r=rad);
+            translate([vec.x-rad,rad,0]) cylinder(h=vec.z,r=rad);
+        }
+    }
+    module bay(x,y) {
+        translate([x,y,-1]) {
+            cylinder(h=5,d=20);
+            translate([0,0,1.6]) cylinder(h=5,d=td);
+        }
+    }
+    w = 100;
+    h = 66;  
+    m = 0.6;
+    c = (m + td/2 + w / 2) / 2;
+    difference() {
+        roundedCube([100,66,2.6]);
+        bay(td/2+m,td/2+m);
+        bay(w/2,td/2+m);
+        bay(w-td/2-m,td/2+m);
+        
+        bay(c,h/2);
+        bay(w-c,h/2);
+
+        bay(td/2+m,h-td/2-m);
+        bay(w/2,h-td/2-m);
+        bay(w-td/2-m,h-td/2-m);
+    }
+}
+
+playerTokensCard();
 
 module tokenTray3() {
     rad=3;
@@ -354,7 +390,7 @@ module cardTray3() {
      }
 }
 
-cardTray3();
+// cardTray3();
 
 /* module cardDivider(w) {
     rad=1;

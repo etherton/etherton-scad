@@ -136,7 +136,7 @@ module scenario_tray(depths=[4,4,4,4,4,4],smallCards = 2,deckThick = 16,cardHeig
            translate([(width-41)/2,tokenSize,offsets[4]-smallCards]) {
                 difference() {
                     cube([41,31,trayDepth]);
-                    translate([10,0,0]) cube([21,31,1.8]);
+                    translate([10,0,0]) cube([21,31,1.4]);
                 }
             }
             if (smallCards)
@@ -201,7 +201,16 @@ translate([0,80,0]) token_tray(17,
 // scenario_tray();
 
 // Ice
-scenario_tray([4,4,5,6,5,4,4], 2, 13.5);
+// scenario_tray([4,4,5,6,5,4,4], 2, 13.6);
+
+// Water
+// scenario_tray([4,4,4,4,5,4,4], 0, 20);
+
+// Forest
+// scenario_tray([4,4, 3,6,3, 4,4], 0, 16);
+
+// Fire
+scenario_tray([4,4,4,2,6,4,4], 0, 15.6);
 
 // fire: 16 trash mobs, 13 extra, 3 standee
 // ice: 16 trash mobs, 16 extra, 3 standee

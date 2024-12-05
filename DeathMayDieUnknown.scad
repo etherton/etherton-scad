@@ -109,8 +109,10 @@ module ring(diam,wells) {
     }
 }
 
+fearUnknownTray();
+
 //ring();
 //ring(25,3);
-ring(45,4);
+//ring(45,4);
 
 //deathMayDieTray();

@@ -38,4 +38,12 @@ module RoundedTrayAndInsetLid(width,height,depth,gutter,trayStarts) {
 //RoundedTrayAndInsetLid(130,80,20,2,[70,105]);
 
 // Extra tray
-RoundedTrayAndInsetLid(140,36,19,2,[50,100]);
+//RoundedTrayAndInsetLid(140,36,19,2,[50,100]);
+
+// Coins, Abandoned, Razed for Burning Banners
+RoundedTrayAndInsetLid(185,80,18,2,[30,60,90,120]);
+translate([91,30,0]) cube([30,2,18]);
+
+// Dice and Counters for Burning Banners
+//RoundedTrayAndInsetLid(185,80,30,2,[30,60,90,120]);
+////translate([91,30,0]) cube([30,2,30]);
