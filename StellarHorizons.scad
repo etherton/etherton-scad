@@ -108,10 +108,11 @@ module settlementTray() { // x2
 }
 
 module structureTray() { // x3
+    // The Defense Structure counters are thinner than the others!
     difference() {
-        roundedCube([28,109 + 16.4,14],rad=2);
+        roundedCube([28,109 + 15.8,14],rad=2);
         for (i=[0:5]) {
-            translate([1,2+i*21,1]) cube([26,i==5?16.4 : 14.4,99]);
+            translate([1,2+i*21,1]) cube([26,i==5?15.8 : 14.4,99]);
         }   
     }
 }
@@ -145,14 +146,14 @@ shearYZ = 0.4;
 
 module factionTray(fname, units) {
     unitSep = 6;
-    function computeOffset(l,c) = c==0? 0 : (l[c-1].y * 2.1 + unitSep + computeOffset(l,c-1));
-    function computeSize(l,c) = l[c].y * 2.1 + (c==0? unitSep : (unitSep + computeSize(l,c-1)));
+    function computeOffset(l,c) = c==0? 0 : (l[c-1].y * 2.2 + unitSep + computeOffset(l,c-1));
+    function computeSize(l,c) = l[c].y * 2.2 + (c==0? unitSep : (unitSep + computeSize(l,c-1)));
 
     difference() {
         roundedCube([28,computeSize(units,len(units)-1) + unitSep + 2,14],rad=2);
         for (i=[0:len(units)-1]) {
             name = units[i].x;
-            size = units[i].y * 2;
+            size = units[i].y * 2.2 + 0.4;
             offset = 1 + computeOffset(units,i);
             translate([14,offset,13]) linear_extrude(2) 
                 text(name,size=4,halign="center",valign="baseline");
@@ -175,11 +176,19 @@ SthAm = [ ["Probe",1], ["Rover",1], ["Tele",1], ["Base",6], ["Orbit",2], ["Flyby
 // smallSolarTray();
 //translate([200,0,0]) 
 //rotate([0,0,45]) 
-resourceTray();
+//resourceTray();
+/* translate([0,0,0]) settlementTray();
+translate([25,0,0]) settlementTray();
+translate([50,0,0]) structureTray();
+translate([80,0,0]) structureTray();
+translate([110,0,0]) structureTray(); */
 //settlementTray(); // x2
-//structureTray(); // x3
+structureTray(); // x3
 //worldCardTray();
 
 /* factionTray("Japan",Japan);
 translate([30,0,0]) factionTray("NorAm",NorAm);
 translate([60,0,0]) factionTray("SthAm",SthAm); */
+
+//translate([0,0,-14])
+//factionTray("Test",[ ["One",1], ["Two",2], ["Three",3], ["Four",4] ]);
