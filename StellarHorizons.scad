@@ -3,6 +3,8 @@
 $fn=60;
 thick = 2.0;
 
+use</Users/etherton/Downloads/Noto_Emoji/NotoEmoji-VariableFont_wght.ttf>
+
 module roundedCube(vec,rad) {
     hull() {
         translate([rad,rad,0]) cylinder(r=rad,h=vec.z);
@@ -55,13 +57,27 @@ module smallSolarTray() {
 
 module resourceTray() {
     fl = 1;
+    sizes = [ 30, 35, 40, 45, 50 ];
+    labels = [ "1", "2", "5", "10", "25" ];
+    prefixes = ["\U01f4b2", "\U01faa8", "\U01f525", "\U01f4a7" ];
+    function computeOffset(l,c) = c==0? 1 : (l[c-1] + 1 + computeOffset(l,c-1));
+    function computeSize(l,c) = l[c] + (c==0? 1 : (1 + computeSize(l,c-1)));
 
-    offsets = [1, 28, 60, 100, 140, 190];
     difference() {
-        roundedCube([offsets[5]-1,40 /*158*/,20],5);
-        for (row=[0:0]) {
-            for (col=[0:4]) {
-                well(offsets[col],1 + row * 39.25, 1, offsets[col+1] - offsets[col]-1, 38);
+        roundedCube([computeSize(sizes,len(sizes)-1)+2,45*4+1,20],5);
+        for (row=[0:3]) {
+            for (col=[0:len(sizes)-1]) {
+                offset = computeOffset(sizes,col);
+                well(offset,1 + row * 45, 1, sizes[col], 44);
+                n = str(prefixes[row],labels[col]);
+                translate([offset + 2*sizes[col]/6,1 + row * 45 + 45/2,0.4])
+                    linear_extrude(1) 
+                        text(prefixes[row],size=row==1?7:9,font="Noto Emoji:style=Regular",
+                            halign = "center",valign = "center");
+                translate([offset + 3*sizes[col]/6,1 + row * 45 + 45/2,0.4])
+                    linear_extrude(1) 
+                        text(labels[col],size=10,
+                            halign = "left",valign = "center");
             }
         }
     }
@@ -120,9 +136,6 @@ module worldCardTray() {
     }
 }
 
-unitSep = 6;
-function computeOffset(l,c) = c==0? 0 : (l[c-1].y * 2.1 + unitSep + computeOffset(l,c-1));
-function computeSize(l,c) = l[c].y * 2.1 + (c==0? unitSep : (unitSep + computeSize(l,c-1)));
 
 shearYZ = 0.4;
  M = [ [ 1  , 0  , 0  , 0   ],
@@ -131,6 +144,10 @@ shearYZ = 0.4;
        [ 0  , 0  , 0  , 1   ] ] ;
 
 module factionTray(fname, units) {
+    unitSep = 6;
+    function computeOffset(l,c) = c==0? 0 : (l[c-1].y * 2.1 + unitSep + computeOffset(l,c-1));
+    function computeSize(l,c) = l[c].y * 2.1 + (c==0? unitSep : (unitSep + computeSize(l,c-1)));
+
     difference() {
         roundedCube([28,computeSize(units,len(units)-1) + unitSep + 2,14],rad=2);
         for (i=[0:len(units)-1]) {
@@ -157,11 +174,12 @@ SthAm = [ ["Probe",1], ["Rover",1], ["Tele",1], ["Base",6], ["Orbit",2], ["Flyby
 
 // smallSolarTray();
 //translate([200,0,0]) 
-//rotate([0,0,45]) resourceTray();
+//rotate([0,0,45]) 
+resourceTray();
 //settlementTray(); // x2
 //structureTray(); // x3
 //worldCardTray();
 
-factionTray("Japan",Japan);
+/* factionTray("Japan",Japan);
 translate([30,0,0]) factionTray("NorAm",NorAm);
-translate([60,0,0]) factionTray("SthAm",SthAm);
+translate([60,0,0]) factionTray("SthAm",SthAm); */
