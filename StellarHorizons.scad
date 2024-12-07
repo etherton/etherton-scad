@@ -168,22 +168,22 @@ module factionTray(n1, n2, units, f = 0, split = 6) {
             (l[c-1].y * 2.2 + unitSep + computeOffset(l,c-1));
     function countUnits(l,c) =
         l[c].y + ((c==0)? 0 : countUnits(l,c-1));
-    module renderLabels(thick) {
+    module renderLabels(offset,thick) {
         for (i=[0:len(units)-1]) {
             name = units[i].x;
             size = units[i].y * 2.2 + 0.4;
             xOffset = (i<split)? 1 : w-27;
             yOffset = computeOffset(units,i);    
-            translate([xOffset+cw/2,yOffset+4,depth-0.6]) linear_extrude(thick) 
-                text(name,size=4,halign="center",valign="top");
+            translate([xOffset+cw/2,yOffset+4,depth+offset]) linear_extrude(thick) 
+                text(name,size=i==5?4.5:5.5,halign="center",valign="top");
         }
         if (len(n2)==0) 
-            translate([1+cw/2, h - 9,depth-0.6]) linear_extrude(thick)
+            translate([1+cw/2, h - 9,depth+offset]) linear_extrude(thick)
                 text(n1,size=6,halign="center",valign="bottom");
         else {
-            translate([1+cw/2, h - 6,depth-0.6]) linear_extrude(thick)
+            translate([1+cw/2, h - 6,depth+offset]) linear_extrude(thick)
                 text(n1,size=3.5,halign="center",valign="bottom");
-            translate([1+cw/2, h - 6.5,depth-0.6]) linear_extrude(thick)
+            translate([1+cw/2, h - 6.5,depthoffset]) linear_extrude(thick)
                 text(n2,size=3.5,halign="center",valign="top");
         }
     }
@@ -204,23 +204,29 @@ module factionTray(n1, n2, units, f = 0, split = 6) {
                     multmatrix(M)
                         cube([cw,size,99]);
             }
-            renderLabels(1);
+            renderLabels(-0.6,1);
             translate([cw+2,1,depth-1]) roundedCube([w-cw*2-4,h - 2,99],rad=2);
             translate([cw+3,2,1]) roundedCube([w-cw*2-6, h/2 - 2,99],rad=2);
             translate([cw+3,2 + h/2 - 1,1]) roundedCube([w-cw*2-6, h/2 - 3,99],rad=2);
         }
+        translate([w+5,0,0]) {
+            difference() {
+                roundedCube([w-cw*2-4,h-2,0.8],2);
+                translate([(w-cw*2-4)/2,0,-1) scale([1,0.666,1]) cylinder(d=16,h=2);
+            }
+        }
     }
     else
-        renderLabels(0.6);
+        renderLabels(-0.4,0.4);
 
 }
 
-module factionLid() {
+/* module factionLid() {
     difference() {
-        roundedCube([26,72-36,0.8],rad=2);
+        roundedCube([26,116,0.8],rad=2);
         translate([13,0,-1]) scale([1,0.666,1]) cylinder(d=16,h=2);
     }
-}
+} */
 
 module meshWallXY(w,h,th,border,size1,size2) {
     cube([border,h,th]); translate([w-border,0,0]) cube([border,h,th]);
@@ -249,12 +255,55 @@ module meshWallXZ(w,h,th,border,size1,size2) {
 module moonTray() {
     difference() {
         cube([88,54,30]);
-        translate([11/2,1,1]) cube([77,2.4,99]);
+        // translate([11/2,1,1]) cube([77,2.4,99]);
+        translate([10/2,53-2.4,1]) cube([78,2.6,99]);
         translate([44,1,77/2+1]) rotate([-90,0,0]) cylinder(h=52,d=77,$fn=180);
     }
-    translate([0,53,0]) meshWallYZ(197,65,1,5,10,15);
-    translate([0,53,30]) meshWallXZ(88,35,1,5,10,15);
+    translate([0,54,0]) meshWallYZ(197,65,1,5,10,15);
+    translate([0,54,30]) meshWallXZ(88,35,1,5,10,15);
     translate([-5,0,0]) cube([11,250,0.2 + 0.28]);
+    
+}
+
+module cup(halfSize = 20, height = 40, tabHeight = 5) {
+    eps = 0.2;
+    module tab(rot) {
+        rotate([0,0,rot]) translate([halfSize,0,0]) {
+            translate([0,-3+eps/2,0]) cube([2+eps,6-eps,tabHeight]);
+            translate([2+eps,-5+eps/2,0]) cube([2-eps-eps,10-eps,tabHeight]);
+        }
+    }
+    module slot(rot) {
+        rotate([0,0,rot]) translate([halfSize,0,0]) {
+            translate([0,-7,0]) cube([4,2,tabHeight]);
+            translate([2,-5,0]) cube([2,2,tabHeight]);
+            translate([2,+3,0]) cube([2,2,tabHeight]);
+            translate([0,+5,0]) cube([4,2,tabHeight]);
+       }
+    }     
+    difference() {
+        roundedCube([halfSize*2,halfSize*2,height],5);
+        well(1,1,1, halfSize*2-2,halfSize*2-2, 5);
+        /* translate([halfSize,halfSize,0.20+0.28]) {
+            rotate([0,0,45])
+            linear_extrude(1)
+                text(label, size = 5, halign="center",valign="center");
+        } */
+    }
+    translate([halfSize,halfSize,0]) {
+        tab(0);
+        tab(90);
+        slot(180);
+        slot(270);
+    }
+    
+    translate([halfSize*2 + 10,0,0]) {
+        difference() {
+            roundedCube([halfSize*2 + 2,halfSize*2 + 2, 3],5);
+            translate([1+eps/2,1+eps/2,0.20+0.28]) 
+                roundedCube([halfSize*2-eps,halfSize*2-eps,5],5);
+        }
+    }
     
 }
 
@@ -292,15 +341,18 @@ translate([110,0,0]) structureTray(); */
 // structureTray(); // x3
 //worldCardTray();
 
-translate([0,0,0]) factionTray("Japan","",Japan,0);
+//translate([0,0,0]) factionTray("Japan","",Japan,0);
 //translate([90,0,0]) factionTray("North","America",NorthAmerica);
 //translate([180,0,0]) factionTray("S.America","& Africa",SouthAmericaAfrica);
 //translate([270,0,0]) factionTray("Asia","",Asia);
 //translate([45,120,0]) factionTray("China","",China);
-//translate([45+90,120,0]) factionTray("Russia","",Russia);
+//translate([45+90,120,0]) 
+factionTray("Russia","",Russia,0);
 //translate([45+180,120,0]) factionTray("Europe","",Europe);
 //factionLid();
 //moonTray();
+
+//cup();
 
 //translate([0,0,-14])
 //factionTray("Test",[ ["One",1], ["Two",2], ["Three",3], ["Four",4] ]);
