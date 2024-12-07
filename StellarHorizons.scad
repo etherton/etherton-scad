@@ -160,62 +160,59 @@ shearYZ = 0.4;
        [ 0  , 0  , 1  , 0   ],
        [ 0  , 0  , 0  , 1   ] ] ;
 
-factionSplit1 = 7;
-factionSplit2 = 99;
 
-module factionTray(n1, n2, units) {
+module factionTray(n1, n2, units, f = 0, split = 6) {
     unitSep = 7;
     function computeOffset(l,c) = 
-        (c==0||c==factionSplit1||c==factionSplit2)? 3 : 
+        (c==0||c==split)? 3 : 
             (l[c-1].y * 2.2 + unitSep + computeOffset(l,c-1));
     function countUnits(l,c) =
         l[c].y + ((c==0)? 0 : countUnits(l,c-1));
-
-    assert(countUnits(units,len(units)-1) == 33, "Wrong number of units");
-    w = 82;
-    h = 108;
-    union() {
-        difference() {
-            roundedCube([w,h,15],rad=2);
-            for (i=[0:len(units)-1]) {
-                name = units[i].x;
-                size = units[i].y * 2.2 + 0.4;
-                xOffset = (i<factionSplit1)? 1 : 28*2-1;
-                yOffset = computeOffset(units,i);    
-                /* translate([xOffset+13,yOffset+4,14]) linear_extrude(2) 
-                    text(name,size=3,halign="center",valign="top");*/
-                translate([xOffset,yOffset-1,1]) multmatrix(M) cube([26,size,99]);
-            }
-            translate([28,1,14]) roundedCube([26,h - 2,99],rad=2);
-            translate([29,2,1]) roundedCube([24, h/2 - 2,99],rad=2);
-            translate([29,2 + h/2 - 1,1]) roundedCube([24, h/2 - 3,99],rad=2);
-            if (len(n2)==0) 
-                translate([14, h - 9,14]) linear_extrude(2)
-                    text(n1,size=6,halign="center",valign="bottom");
-            else {
-                translate([14, h - 6,14]) linear_extrude(2)
-                    text(n1,size=3.5,halign="center",valign="bottom");
-                translate([14, h - 6.5,14]) linear_extrude(2)
-                    text(n2,size=3.5,halign="center",valign="top");
-            }
-        }
-       for (i=[0:len(units)-1]) {
+    module renderLabels(thick) {
+        for (i=[0:len(units)-1]) {
             name = units[i].x;
             size = units[i].y * 2.2 + 0.4;
-            xOffset = (i<factionSplit1)? 1 : 28*2-1;
+            xOffset = (i<split)? 1 : w-27;
             yOffset = computeOffset(units,i);    
-            translate([xOffset,yOffset-1+size,1]) multmatrix(M) {
-                difference() {
-                    cube([26,2,24]);
-                    translate([13,0,18]) 
-                        rotate([90,0,0])
-                            linear_extrude(2,center=true)
-                                text(name,size=5,halign="center",valign="top");
-                    translate([13,-1,24]) scale([1,1,0.5]) rotate([90,0,0]) cylinder(h=99,d=20,center=true);
-                }
-            }
+            translate([xOffset+cw/2,yOffset+4,depth-0.6]) linear_extrude(thick) 
+                text(name,size=4,halign="center",valign="top");
+        }
+        if (len(n2)==0) 
+            translate([1+cw/2, h - 9,depth-0.6]) linear_extrude(thick)
+                text(n1,size=6,halign="center",valign="bottom");
+        else {
+            translate([1+cw/2, h - 6,depth-0.6]) linear_extrude(thick)
+                text(n1,size=3.5,halign="center",valign="bottom");
+            translate([1+cw/2, h - 6.5,depth-0.6]) linear_extrude(thick)
+                text(n2,size=3.5,halign="center",valign="top");
         }
     }
+
+    assert(countUnits(units,len(units)-1) == 33, "Wrong number of units");
+    w = 86;
+    h = 110;
+    cw = 26;
+    depth = 15;
+    if (f==0) {
+        difference() {            
+            roundedCube([w,h,depth],rad=2);
+            for (i=[0:len(units)-1]) {
+                size = units[i].y * 2.2 + 0.4;
+                xOffset = (i<split)? 1 : w-27;
+                yOffset = computeOffset(units,i);    
+                translate([xOffset,yOffset-1,1]) 
+                    multmatrix(M)
+                        cube([cw,size,99]);
+            }
+            renderLabels(1);
+            translate([cw+2,1,depth-1]) roundedCube([w-cw*2-4,h - 2,99],rad=2);
+            translate([cw+3,2,1]) roundedCube([w-cw*2-6, h/2 - 2,99],rad=2);
+            translate([cw+3,2 + h/2 - 1,1]) roundedCube([w-cw*2-6, h/2 - 3,99],rad=2);
+        }
+    }
+    else
+        renderLabels(0.6);
+
 }
 
 module factionLid() {
@@ -223,6 +220,42 @@ module factionLid() {
         roundedCube([26,72-36,0.8],rad=2);
         translate([13,0,-1]) scale([1,0.666,1]) cylinder(d=16,h=2);
     }
+}
+
+module meshWallXY(w,h,th,border,size1,size2) {
+    cube([border,h,th]); translate([w-border,0,0]) cube([border,h,th]);
+    cube([w,border,th]); translate([0,h-border,0]) cube([w,border,th]);
+    nc = floor(max(w,h) / size2) + 1;
+    difference() {
+        translate([border,border,0]) cube([w-border*2,h-border*2,th]);
+        rotate([0,0,45]) {
+            for (i=[-nc:nc]) {
+                for (j=[-nc:nc]) {
+                    translate([i*size2,j*size2,-1]) cube([size1,size1,th+2]);
+                }
+            }
+        }
+    }
+}
+
+module meshWallYZ(w,h,th,border,size1,size2) {
+    rotate([90,0,90]) meshWallXY(w,h,th,border,size1,size2);
+}
+
+module meshWallXZ(w,h,th,border,size1,size2) {
+    rotate([90,0,0]) meshWallXY(w,h,th,border,size1,size2);
+}
+
+module moonTray() {
+    difference() {
+        cube([88,54,30]);
+        translate([11/2,1,1]) cube([77,2.4,99]);
+        translate([44,1,77/2+1]) rotate([-90,0,0]) cylinder(h=52,d=77,$fn=180);
+    }
+    translate([0,53,0]) meshWallYZ(197,65,1,5,10,15);
+    translate([0,53,30]) meshWallXZ(88,35,1,5,10,15);
+    translate([-5,0,0]) cube([11,250,0.2 + 0.28]);
+    
 }
 
 Japan = [ ["Probe",2], ["Rover",1], ["Tele",1], ["Base",6], ["Orbit",3], ["Flyby",4],
@@ -259,15 +292,15 @@ translate([110,0,0]) structureTray(); */
 // structureTray(); // x3
 //worldCardTray();
 
-translate([0,0,0]) factionTray("Japan","",Japan);
-/* translate([90,0,0]) factionTray("North","America",NorthAmerica);
-translate([180,0,0]) factionTray("S.America","& Africa",SouthAmericaAfrica);
-translate([270,0,0]) factionTray("Asia","",Asia);
-translate([45,120,0]) factionTray("China","",China);
-translate([45+90,120,0]) factionTray("Russia","",Russia);
-translate([45+180,120,0]) factionTray("Europe","",Europe); */
+translate([0,0,0]) factionTray("Japan","",Japan,0);
+//translate([90,0,0]) factionTray("North","America",NorthAmerica);
+//translate([180,0,0]) factionTray("S.America","& Africa",SouthAmericaAfrica);
+//translate([270,0,0]) factionTray("Asia","",Asia);
+//translate([45,120,0]) factionTray("China","",China);
+//translate([45+90,120,0]) factionTray("Russia","",Russia);
+//translate([45+180,120,0]) factionTray("Europe","",Europe);
 //factionLid();
-
+//moonTray();
 
 //translate([0,0,-14])
 //factionTray("Test",[ ["One",1], ["Two",2], ["Three",3], ["Four",4] ]);
