@@ -82,7 +82,7 @@ module slotPart(tabHeight = 5) {
 // 49 numbers
 // 45 misc
 //280 total
-module resourceTray(topTab,bottomTab,h,sizes,prefix,labels,f=0,labelSize=9,prefixSize=9) {
+module resourceTray(topTab,bottomTab,h,sizes,prefix,labels,f=0,labelSize=9,prefixSize=9,depth=20) {
     fl = 1;
     function computeOffset(l,c) = c==0? 1 : (l[c-1] + 1 + computeOffset(l,c-1));
     function computeSize(l,c) = l[c] + (c==0? 1 : (1 + computeSize(l,c-1)));
@@ -93,7 +93,7 @@ module resourceTray(topTab,bottomTab,h,sizes,prefix,labels,f=0,labelSize=9,prefi
         if (len(prefix))
             translate([offset + 2*sizes[col]/6,1 + vCell/2,0.6])
                 linear_extrude(f==0?1:0.4) 
-                    text(prefix,prefixSize,font="Noto Emoji:style=Regular",
+                    text(prefix,prefixSize,font="Noto Emoji:style=Bold",
                         halign = "center",valign = "center");
         translate([offset + sizes[col]/2,1 + vCell/2,0.6])
             rotate([0,0,sizes[col]<20? 90 : 0]) linear_extrude(f==0?1:0.4)
@@ -111,7 +111,7 @@ module resourceTray(topTab,bottomTab,h,sizes,prefix,labels,f=0,labelSize=9,prefi
     else {
         union() {
             difference() {
-                roundedCube([w,h,20],5);
+                roundedCube([w,h,depth],5);
                 for (col=[0:len(sizes)-1]) {
                     offset = computeOffset(sizes,col);
                     well(offset, 1, 1, sizes[col], vCell);
@@ -384,6 +384,18 @@ module vpTray() {
     }
 }
 
+module smallTray(nw) {
+    w = 109;
+    c = (w - (nw+1)) / nw;
+    difference() {
+        roundedCube([109,49,26.6],5);
+        well(1,1,1,c,47);
+        well((c+1)*1+1,1,1,c,47);
+        well((c+1)*2+1,1,1,c,47);
+        well((c+1)*3+1,1,1,c,47);
+    }
+}
+
 Japan = [ ["Probe",2], ["Rover",1], ["Tele",1], ["Base",6], ["Orbit",3], ["Flyby",4],
     ["LV1",2], ["LV2",3], ["CV2",1], ["CV3",2], ["CV4",2], ["CV5",2], ["CV6",2], ["CV7",1], ["CV9",1] ];
 
@@ -456,22 +468,28 @@ rt = 45;
 echo ("Should be 279: ",st + ((rt+4)*5));
 //resourceTray(true,false,st,[40,35,35,45,56], "", [ "Px1", "Px2","Px5", "H/T", "Dmg"], f);
 //translate([0,st+4,0]) 
-resourceTray(true,true,rt,[70, 45, 40, 32, 24 ], "", ["0/1","2/3","4/5","6/7","8/9"], f );
-//translate([0,st+4+(rt+4)*1,0]) resourceTray(true,true,rt,resourceMoneySizes,"\U01f4a7",resourceMoneyLabels,f);
-//translate([0,st+4+(rt+4)*2,0]) resourceTray(true,true,rt,resourceMoneySizes,"\U01f525",resourceMoneyLabels,f);
-//translate([0,st+4+(rt+4)*3,0]) resourceTray(true,true,rt,resourceMoneySizes,"\U01faa8",resourceMoneyLabels,f,9,7);
-//translate([0,st+4+(rt+4)*4,0]) resourceTray(false,true,rt,resourceMoneySizes,"\U01f4b2",resourceMoneyLabels,f);
+//resourceTray(true,true,rt,[70, 45, 40, 32, 24 ], "", ["0/1","2/3","4/5","6/7","8/9"], f );
+//translate([0,st+4+(rt+4)*1,0]) 
+//resourceTray(true,true,rt,resourceMoneySizes,"\U01f4a7",resourceMoneyLabels,f); // supplies
+//translate([0,st+4+(rt+4)*2,0]) 
+//resourceTray(true,true,rt,resourceMoneySizes,"\U01f525",resourceMoneyLabels,f); // fuel
+//translate([0,st+4+(rt+4)*3,0]) 
+//resourceTray(true,true,rt,resourceMoneySizes,"\U01faa8",resourceMoneyLabels,f,9,7); // ore
+//translate([0,st+4+(rt+4)*4,0]) 
+//resourceTray(false,true,rt,resourceMoneySizes,"\U01f4b2",resourceMoneyLabels,f); // cash
  
+ 
+ resourceTray(false,false,79,[70,50,46,46], "", ["1x/2x", "3x/4x", "5x/10x", "15x/20x" ], labelSize=7.5, depth=22);
 
 //, "Vx1", "Vx3", "Vx5", "Vx10" ], 0, 7, 7);
  
 // miscTray();
 //rotate([0,0,45]) miscTray();
-
+//smallTray(4);
 //cup();
 
 //vpTray();
-worldCardTray2();
+//worldCardTray2();
 
 //translate([0,0,-14])
 //factionTray("Test",[ ["One",1], ["Two",2], ["Three",3], ["Four",4] ]);
