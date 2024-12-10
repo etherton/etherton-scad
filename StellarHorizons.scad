@@ -30,14 +30,21 @@ module well(x,y,z,w,h,rad = 5) {
 module labeledWell(f,label,x,y,z,w,h) {
     if (f == 0)
         well(x,y,z,w,h);
-    translate([x+w/2,y+h/2,z-0.4])
-        linear_extrude(f == 0? 1 : 0.4) {
-            if (is_list(label)) {
-                text(label[0],size = h/4,halign="center",valign="bottom");
-                text(label[1],size = h/4,halign="center",valign="top");
-            }
-            else
-                text(label,size = h/4,halign="center",valign="center");
+
+    if (is_list(label)) {
+        s = max(len(label[0]),len(label[1]));
+        translate([x+w/2,y+h/2+0.5,z-0.4])
+            linear_extrude(f == 0? 1 : 0.4)
+                text(label[0],size = w / s,halign="center",valign="bottom");
+        translate([x+w/2,y+h/2-0.5,z-0.4])
+            linear_extrude(f == 0? 1 : 0.4)
+                text(label[1],size = w / s,halign="center",valign="top");
+    }
+    else {
+        translate([x+w/2,y+h/2,z-0.4])
+            linear_extrude(f == 0? 1 : 0.4)
+                text(label,size = w / len(label),halign="center",valign="center");
+    }
 }
 
 // don't print this in draft mode
@@ -346,7 +353,8 @@ module moonTray() {
 }
 
 
-module cup(halfSize = 28, height = 40, tabHeight = 5) {
+// lid adds 1mm of height
+module cup(halfSize = 24, height = 40, tabHeight = 5) {
     eps = 0.2;
     module tab(rot) {
         rotate([0,0,rot]) translate([halfSize,0,0]) tabPart(tabHeight, eps);
@@ -409,29 +417,67 @@ module smallTray(nw) {
     c = (w - (nw+1)) / nw;
     difference() {
         roundedCube([109,40,28],5);
-        well(1,1,1,c,47);
-        well((c+1)*1+1,1,1,c,47);
-        well((c+1)*2+1,1,1,c,47);
-        well((c+1)*3+1,1,1,c,47);
+        for (i=[0:nw-1])
+            well((c+1)*i+1,1,1,c,38);
     }
 }
 
+// total depth is 62mm; these are 26
 module structureTray(f,labels) {
     module labels(f) {
         labeledWell(f,labels[0],1,1,1, cx,cy);
         labeledWell(f,labels[1],2+cx,1,1, cx,cy);
         labeledWell(f,labels[2],3+cx*2,1,1, cx,cy);
     }
-    cx = (180 - 4) / 3;
-    cy = 58;
+    cx = (179 - 4) / 3;
+    cy = 50;
     if (f==0) {
         difference() {
-            roundedCube([180,60,38],5);
+            roundedCube([179,52,26],5);
             labels(f);
         }
     }
     else
         labels(f);
+}
+
+module smallHexTray() {
+    difference() {
+        cylinder(d=181,h=17,$fn=6);
+        translate([0,0,-1]) cylinder(d=160,h=99,$fn=6);
+        translate([0,0,1]) cylinder(d=180,h=99,$fn=6);
+    }
+}
+
+module bigHexTray() {
+    difference() {
+        cylinder(d=235,h=21,$fn=6);
+        translate([0,0,0.6]) cylinder(d=180,h=99,$fn=6);
+        translate([0,0,16.6]) cylinder(d=234,h=99,$fn=6);
+        translate([0,0,-1]) cylinder(d=160,h=99,$fn=6);
+        for (i=[30:60:330])
+            rotate([0,0,i]) translate([80,0,-1]) linear_extrude(99)
+                polygon([ [0,45], [20,56], [20,-56], [0,-45] ]);
+    }
+}
+
+module spacerPart1() {
+    difference() {
+        union() {
+            translate([0,9,0]) cube([42,16,16]);
+            translate([42,0,0]) cube([108,25,16]);
+            translate([150-16,25,0]) cube([16,50,16]);
+        }
+        translate([100,5,14]) cube([10,2,99]);
+        translate([130,5,14]) cube([10,2,99]);
+    }
+}
+
+module spacerPart2() {
+    translate([100.1,5.1,14.2]) cube([9.8,1.8,1.8]);
+    translate([131.1,5.1,14.2]) cube([9.8,1.8,1.8]);
+    translate([42+43,0,16]) linear_extrude(4) polygon([ [0,25], [5,25], [43,0], [0,0] ]);
+    translate([42,0,16]) linear_extrude(4) polygon([ [54,0], [54+120,66], [54+120,-60], [54+62,-60], [54+62,0] ]);
 }
 
 Japan = [ ["Probe",2], ["Rover",1], ["Tele",1], ["Base",6], ["Orbit",3], ["Flyby",4],
@@ -528,8 +574,14 @@ echo ("Should be 279: ",st + ((rt+4)*5));
 
 // vpTray(1);
 //worldCardTray2();
-structureTray(0,[ ["Research","Station"], ["Supply","Station"], "Spaceport"]);
-//translate([0,70,0]) structureTray(0,[ ["Defense","Network"], ["Mining","Station"],"Refinery"]);
+//structureTray(1,[ ["Research","Station"], ["Supply","Station"], "Spaceport"]);
+structureTray(1,[ ["Defense","Network"], ["Mining","Station"],"Refinery"]);
+
+//smallHexTray();
+//smallTray(3);/
+///spacerPart1();
+//rotate([180,0,0]) spacerPart2();
+//bigHexTray();
 
 //translate([0,0,-14])
 //factionTray("Test",[ ["One",1], ["Two",2], ["Three",3], ["Four",4] ]);
