@@ -27,10 +27,17 @@ module well(x,y,z,w,h,rad = 5) {
     }
 }
 
-module labeledWell(label,x,y,z,w,h) {
-    well(x,y,z,w,h);
-    translate([x+w/2,y+h/2,z-0.4]) linear_extrude(0.5)
-        text(label,size = h/4,halign="center",valign="center");
+module labeledWell(f,label,x,y,z,w,h) {
+    if (f == 0)
+        well(x,y,z,w,h);
+    translate([x+w/2,y+h/2,z-0.4])
+        linear_extrude(f == 0? 1 : 0.4) {
+            if (is_list(label)) {
+                text(label[0],size = h/4,halign="center",valign="bottom");
+                text(label[1],size = h/4,halign="center",valign="top");
+            }
+            else
+                text(label,size = h/4,halign="center",valign="center");
 }
 
 // don't print this in draft mode
@@ -339,7 +346,7 @@ module moonTray() {
 }
 
 
-module cup(halfSize = 29, height = 40, tabHeight = 5) {
+module cup(halfSize = 28, height = 40, tabHeight = 5) {
     eps = 0.2;
     module tab(rot) {
         rotate([0,0,rot]) translate([halfSize,0,0]) tabPart(tabHeight, eps);
@@ -349,7 +356,11 @@ module cup(halfSize = 29, height = 40, tabHeight = 5) {
     }  
     
     difference() {
-        roundedCube([halfSize*2,halfSize*2,height],5);
+        union() {
+            roundedCube([halfSize*2,halfSize*2,height],5);
+            translate([halfSize/2,-1,0]) cube([halfSize,1,3]);
+            translate([halfSize/2,halfSize*2,0]) cube([halfSize,1,3]);
+        }
         well(1,1,1, halfSize*2-2,halfSize*2-2, 5);
         /* translate([halfSize,halfSize,0.20+0.28]) {
             rotate([0,0,45])
@@ -364,7 +375,7 @@ module cup(halfSize = 29, height = 40, tabHeight = 5) {
         //slot(270);
     }
     
-    translate([halfSize*2 + 10,0,0]) {
+    translate([halfSize*2 + 10,-1,0]) {
         difference() {
             roundedCube([halfSize*2 + 2,halfSize*2 + 2, 3],5);
             translate([1+eps/2,1+eps/2,0.20+0.28]) 
@@ -374,13 +385,22 @@ module cup(halfSize = 29, height = 40, tabHeight = 5) {
     
 }
 
-module vpTray() {
-    difference() {
-        roundedCube([79,79,20],5);
-        labeledWell("Vx1", 1,1,1, 38,38);
-        labeledWell("Vx3", 40,1,1, 38,38);
-        labeledWell("Vx5", 1,40,1, 38,38);
-        labeledWell("Vx10", 40,40,1, 38,38);
+module vpTray(f=0) {
+    cx = 53;
+    cy = 37;
+    module labels(f) {
+        labeledWell(f,"Vx1", 1,1,1, cx,cy);
+        labeledWell(f,"Vx3", cx+2,1,1, cx,cy);
+        labeledWell(f,"Vx5", 1,cy+2,1, cx,cy);
+        labeledWell(f,"Vx10", cx+2,cy+2,1, cx,cy);
+    }
+    if (f)
+        labels(f);
+    else {
+        difference() {
+            roundedCube([109,77,30],5);
+            labels(f);
+        }
     }
 }
 
@@ -388,12 +408,30 @@ module smallTray(nw) {
     w = 109;
     c = (w - (nw+1)) / nw;
     difference() {
-        roundedCube([109,49,26.6],5);
+        roundedCube([109,40,28],5);
         well(1,1,1,c,47);
         well((c+1)*1+1,1,1,c,47);
         well((c+1)*2+1,1,1,c,47);
         well((c+1)*3+1,1,1,c,47);
     }
+}
+
+module structureTray(f,labels) {
+    module labels(f) {
+        labeledWell(f,labels[0],1,1,1, cx,cy);
+        labeledWell(f,labels[1],2+cx,1,1, cx,cy);
+        labeledWell(f,labels[2],3+cx*2,1,1, cx,cy);
+    }
+    cx = (180 - 4) / 3;
+    cy = 58;
+    if (f==0) {
+        difference() {
+            roundedCube([180,60,38],5);
+            labels(f);
+        }
+    }
+    else
+        labels(f);
 }
 
 Japan = [ ["Probe",2], ["Rover",1], ["Tele",1], ["Base",6], ["Orbit",3], ["Flyby",4],
@@ -479,7 +517,7 @@ echo ("Should be 279: ",st + ((rt+4)*5));
 //resourceTray(false,true,rt,resourceMoneySizes,"\U01f4b2",resourceMoneyLabels,f); // cash
  
  
- resourceTray(false,false,79,[70,50,46,46], "", ["1x/2x", "3x/4x", "5x/10x", "15x/20x" ], labelSize=7.5, depth=22);
+// resourceTray(false,false,79,[70,50,46,46], "", ["1x/2x", "3x/4x", "5x/10x", "15x/20x" ], labelSize=7.5, f=1, depth=22);
 
 //, "Vx1", "Vx3", "Vx5", "Vx10" ], 0, 7, 7);
  
@@ -488,8 +526,10 @@ echo ("Should be 279: ",st + ((rt+4)*5));
 //smallTray(4);
 //cup();
 
-//vpTray();
+// vpTray(1);
 //worldCardTray2();
+structureTray(0,[ ["Research","Station"], ["Supply","Station"], "Spaceport"]);
+//translate([0,70,0]) structureTray(0,[ ["Defense","Network"], ["Mining","Station"],"Refinery"]);
 
 //translate([0,0,-14])
 //factionTray("Test",[ ["One",1], ["Two",2], ["Three",3], ["Four",4] ]);
