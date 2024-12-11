@@ -341,7 +341,7 @@ module factionTray(fname, units, f = 0, split = 6) {
 module meshWallXY(w,h,th,border,size1,size2) {
     cube([border,h,th]); translate([w-border,0,0]) cube([border,h,th]);
     cube([w,border,th]); translate([0,h-border,0]) cube([w,border,th]);
-    nc = floor(max(w,h) / size2) + 1;
+    nc = floor(max(w,h) / size2) + 2;
     difference() {
         translate([border,border,0]) cube([w-border*2,h-border*2,th]);
         rotate([0,0,45]) {
@@ -420,10 +420,12 @@ module cup(halfHeight = 25, halfWidth = 25,depth = 35, tabHeight = 5) {
 // HEX TRAY PRINTS IN DRAFT
 module anotherHexTray() {
     module rt() {  
-        linear_extrude(16) offset(r=2) polygon([ [-90,-74], [-90,-10], [-90+75/2,-74] ]);
+        a1 =  -90;
+        b1 = -75;
+        translate([-1,0.5,0]) linear_extrude(16) offset(r=3) polygon([ [a1,b1], [a1,-9], [a1-b1/2,b1] ]);
     }
     difference() {
-        translate([-194/2,-160/2,0]) roundedCube([194,160,16],5);
+        translate([-193/2,-159/2,0]) roundedCube([193,159,16],5);
         translate([0,0,0.2+0.28]) {
             cylinder(d=180,h=99,$fn=6);
             rt();
@@ -465,14 +467,40 @@ module smallTray(nw) {
 }
 
 // DICE TRAY PRINTS IN DRAFT
-module diceTray() {
+module diceTray(w = 190, h = 82, d = 27) {
     th = 0.2 + 0.28 * 2;
     difference() {
-        roundedCube([190,82,27],5);
-        translate([1,1,th]) roundedCube([188,80,99],5);
-        translate([5,5,-1]) cube([180,72,99]);
+        roundedCube([w,h,d],5);
+        translate([1,1,th]) roundedCube([w-2,h-2,99],5);
+        translate([5,5,-1]) cube([w-10,h-10,99]);
     }
-    translate([5,5,0]) meshWallXY(180,72,th,0,10,15);
+    translate([5,5,0]) meshWallXY(w-10,h-10,th,0,10,15);
+}
+
+// Print this tray in DRAFT
+module anotherMiscTray(flag) {
+    w = 160;
+    h = 82;
+    cx = (w-4)/3;
+    cy = (h-3)/2;
+    th = 0.20 + 0.28;
+    d = 17;
+    eps = 0.2;
+    union() {
+        difference() {
+            roundedCube([w,h,d],5);
+            well(1,1,th, cx,cy);
+            well(1,cy+2,th, cx,cy);
+            well(cx+2,1,th, cx,cy);
+            well(cx+2,cy+2,th, cx,cy);
+            well(cx+cx+3,1,th, cx,cy);
+            well(cx+cx+3,cy+2,th, cx,cy);
+            if (flag==0)
+                translate([w/2-15,h/2-0.5,-1]) cube([30,1,2]);
+        }
+        if (flag==1)
+            translate([w/2-15+eps/2,h/2-0.5+eps/2,d]) cube([30-eps,1-eps,1-eps]);
+    }
 }
 
 // total depth is 62mm; these are 26, so cups need to be 36 incl lid
@@ -567,13 +595,13 @@ translate([110,0,0]) structureTray(); */
 // structureTray(); // x3
 //worldCardTray();
 
-translate([0,0,0]) factionTray("Japan",Japan,0);
-translate([130,0,0]) factionTray(["North","America"],NorthAmerica,0);
-translate([260,0,0]) factionTray(["South","America","& Africa"],SouthAmericaAfrica,0);
-translate([390,0,0]) factionTray("Asia",Asia,0);
-translate([45,120,0]) factionTray("China",China,0);
-translate([45+130,120,0]) factionTray("Russia",Russia,0);
-translate([45+260,120,0]) factionTray("Europe",Europe,0);
+//translate([0,0,0]) factionTray("Japan",Japan,0);
+//translate([130,0,0]) factionTray(["North","America"],NorthAmerica,0);
+//translate([260,0,0]) factionTray(["South","America","& Africa"],SouthAmericaAfrica,0);
+//translate([390,0,0]) factionTray("Asia",Asia,0);
+//translate([45,120,0]) factionTray("China",China,0);
+//translate([45+130,120,0]) factionTray("Russia",Russia,0);
+//translate([45+260,120,0]) factionTray("Europe",Europe,0);
 //factionLid();
 //moonTray();
 
@@ -618,8 +646,10 @@ echo ("Should be 279: ",st + ((rt+4)*5));
 //smallTray(4);
 //cup(halfWidth=40);
 //anotherHexTray();
-//diceTray();
-
+//diceTray(); // bottom layer
+diceTray(110,96,32); // top layer
+// anotherMiscTray(0);
+// translate([0,90,0]) anotherMiscTray(1);
 // vpTray(1);
 //worldCardTray3();
 //structureTray(1,[ ["Research","Station"], ["Supply","Station"], "Spaceport"]);
