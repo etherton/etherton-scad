@@ -258,21 +258,24 @@ shearYZ = 0.4;
 
 
 module factionTray(fname, units, f = 0, split = 6) {
-    unitSep = 8;
+    unitSep = 7;
     function computeOffset(l,c) = 
         (c==0||c==split)? 3 : 
             (l[c-1].y * 2.2 + unitSep + computeOffset(l,c-1));
     function countUnits(l,c) =
         l[c].y + ((c==0)? 0 : countUnits(l,c-1));
     function adjust(y) = y * 2.2 + 0.4;
+    
+    cw = 26;
+
     module renderLabels(offset,thick) {
         for (i=[0:len(units)-1]) {
             name = units[i].x;
             size = adjust(units[i].y);
-            xOffset = (i<split)? 1 : w-27;
+            xOffset = (i<split)? 1 : w-cw-1;
             yOffset = computeOffset(units,i);    
             translate([xOffset+cw/2,yOffset+4,depth+offset]) linear_extrude(thick) 
-                text(name,size=i==5?5.5:6.5,halign="center",valign="top");
+                text(name,size=i==5?4.5:5.5,halign="center",valign="top");
         }
         translate([cw/2,(computeOffset(units,split-1) + adjust(units[split-1].y + 2) + h)/2,depth+offset])
             rotate([0,0,90]) {
@@ -297,16 +300,15 @@ module factionTray(fname, units, f = 0, split = 6) {
     }
 
     assert(countUnits(units,len(units)-1) == 33, "Wrong number of units");
-    w = 89;
-    h = 119;
-    cw = 26;
+    w = 86;
+    h = 110;
     depth = 15;
     if (f==0) {
         difference() {            
             roundedCube([w,h,depth],rad=2);
             for (i=[0:len(units)-1]) {
                 size = adjust(units[i].y);
-                xOffset = (i<split)? 1 : w-27;
+                xOffset = (i<split)? 1 : w-cw-1;
                 yOffset = computeOffset(units,i);    
                 translate([xOffset,yOffset-1,1]) 
                     multmatrix(M)
@@ -565,13 +567,13 @@ translate([110,0,0]) structureTray(); */
 // structureTray(); // x3
 //worldCardTray();
 
-//translate([0,0,0]) factionTray("Japan",Japan,0);
-//translate([130,0,0]) factionTray(["North","America"],NorthAmerica,0);
-//translate([260,0,0]) factionTray(["South","America","& Africa"],SouthAmericaAfrica,0);
-//translate([390,0,0]) factionTray("Asia",Asia,0);
-//translate([45,120,0]) factionTray("China",China,0);
-//translate([45+130,120,0]) factionTray("Russia",Russia,0);
-//translate([45+260,120,0]) factionTray("Europe",Europe,0);
+translate([0,0,0]) factionTray("Japan",Japan,0);
+translate([130,0,0]) factionTray(["North","America"],NorthAmerica,0);
+translate([260,0,0]) factionTray(["South","America","& Africa"],SouthAmericaAfrica,0);
+translate([390,0,0]) factionTray("Asia",Asia,0);
+translate([45,120,0]) factionTray("China",China,0);
+translate([45+130,120,0]) factionTray("Russia",Russia,0);
+translate([45+260,120,0]) factionTray("Europe",Europe,0);
 //factionLid();
 //moonTray();
 
@@ -619,7 +621,7 @@ echo ("Should be 279: ",st + ((rt+4)*5));
 //diceTray();
 
 // vpTray(1);
-worldCardTray3();
+//worldCardTray3();
 //structureTray(1,[ ["Research","Station"], ["Supply","Station"], "Spaceport"]);
 //structureTray(1,[ ["Defense","Network"], ["Mining","Station"],"Refinery"]);
 
