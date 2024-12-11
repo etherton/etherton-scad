@@ -240,6 +240,15 @@ module worldCardTray2() {
     }
 }
 
+// WORLD CARD TRAY PRINTS IN DRAFT
+module worldCardTray3() {
+    e = 9;
+    difference() {
+        roundedCube([108,78,20],5);
+        translate([1,(77-55)/2,0.2 + 0.28]) rotate([90,0,90]) linear_extrude(106) polygon([
+            [e,0], [0,e], [0,99], [55,99], [55,e], [55-e,0] ]);
+    }
+}
 
 shearYZ = 0.4;
  M = [ [ 1  , 0  , 0  , 0   ],
@@ -368,43 +377,60 @@ module moonTray() {
 // lid adds 1mm of height
 //6 cups is 
 // (6 * (50+4)) = 324
-module cup(halfSize = 25, height = 35, tabHeight = 5) {
+// CUP PRINTS IN DRAFT
+module cup(halfHeight = 25, halfWidth = 25,depth = 35, tabHeight = 5) {
     eps = 0.2;
     module tab(rot) {
-        rotate([0,0,rot]) translate([halfSize,0,0]) tabPart(tabHeight, eps);
+        rotate([0,0,rot]) translate([halfWidth,0,0]) tabPart(tabHeight, eps);
     }
     module slot(rot) {
-        rotate([0,0,rot]) translate([halfSize,0,0]) slotPart(tabHeight);
+        rotate([0,0,rot]) translate([halfWidth,0,0]) slotPart(tabHeight);
     }  
     
     difference() {
         union() {
-            roundedCube([halfSize*2,halfSize*2,height],5);
-            translate([halfSize/2,-1,0]) cube([halfSize,1,3]);
-            translate([halfSize/2,halfSize*2,0]) cube([halfSize,1,3]);
+            roundedCube([halfWidth*2,halfHeight*2,depth],5);
+            translate([halfWidth/2,-1,0]) cube([halfWidth,1,3]);
+            translate([halfWidth/2,halfHeight*2,0]) cube([halfWidth,1,3]);
         }
-        well(1,1,1, halfSize*2-2,halfSize*2-2, 5);
+        well(1,1,1, halfWidth*2-2,halfHeight*2-2, 5);
         /* translate([halfSize,halfSize,0.20+0.28]) {
             rotate([0,0,45])
             linear_extrude(1)
                 text(label, size = 5, halign="center",valign="center");
         } */
     }
-    translate([halfSize,halfSize,0]) {
+    translate([halfWidth,halfHeight,0]) {
         tab(0);
-        //tab(90);
         slot(180);
-        //slot(270);
     }
     
-    translate([halfSize*2 + 10,-1,0]) {
+    translate([-1,halfHeight*2 + 10,0]) {
         difference() {
-            roundedCube([halfSize*2 + 2,halfSize*2 + 2, 3],5);
+            roundedCube([halfWidth*2 + 2,halfHeight*2 + 2, 3],5);
             translate([1+eps/2,1+eps/2,0.20+0.28]) 
-                roundedCube([halfSize*2-eps,halfSize*2-eps,5],4);
+                roundedCube([halfWidth*2-eps,halfHeight*2-eps,5],4);
         }
     }
     
+}
+
+// HEX TRAY PRINTS IN DRAFT
+module anotherHexTray() {
+    module rt() {  
+        linear_extrude(16) offset(r=2) polygon([ [-90,-74], [-90,-10], [-90+75/2,-74] ]);
+    }
+    difference() {
+        translate([-194/2,-160/2,0]) roundedCube([194,160,16],5);
+        translate([0,0,0.2+0.28]) {
+            cylinder(d=180,h=99,$fn=6);
+            rt();
+            scale([1,-1,1]) rt();
+            scale([-1,-1,1]) rt();
+            scale([-1,1,1]) rt();
+        }
+        translate([0,0,-1]) cylinder(d=160,h=99,$fn=6);
+    }
 }
 
 module vpTray(f=0) {
@@ -434,6 +460,17 @@ module smallTray(nw) {
         for (i=[0:nw-1])
             well((c+1)*i+1,1,1,c,38);
     }
+}
+
+// DICE TRAY PRINTS IN DRAFT
+module diceTray() {
+    th = 0.2 + 0.28 * 2;
+    difference() {
+        roundedCube([190,82,27],5);
+        translate([1,1,th]) roundedCube([188,80,99],5);
+        translate([5,5,-1]) cube([180,72,99]);
+    }
+    translate([5,5,0]) meshWallXY(180,72,th,0,10,15);
 }
 
 // total depth is 62mm; these are 26, so cups need to be 36 incl lid
@@ -528,13 +565,13 @@ translate([110,0,0]) structureTray(); */
 // structureTray(); // x3
 //worldCardTray();
 
-translate([0,0,0]) factionTray("Japan",Japan,0);
-translate([130,0,0]) factionTray(["North","America"],NorthAmerica,0);
-translate([260,0,0]) factionTray(["South","America","& Africa"],SouthAmericaAfrica,0);
-translate([390,0,0]) factionTray("Asia",Asia,0);
-translate([45,120,0]) factionTray("China",China,0);
-translate([45+130,120,0]) factionTray("Russia",Russia,0);
-translate([45+260,120,0]) factionTray("Europe",Europe,0);
+//translate([0,0,0]) factionTray("Japan",Japan,0);
+//translate([130,0,0]) factionTray(["North","America"],NorthAmerica,0);
+//translate([260,0,0]) factionTray(["South","America","& Africa"],SouthAmericaAfrica,0);
+//translate([390,0,0]) factionTray("Asia",Asia,0);
+//translate([45,120,0]) factionTray("China",China,0);
+//translate([45+130,120,0]) factionTray("Russia",Russia,0);
+//translate([45+260,120,0]) factionTray("Europe",Europe,0);
 //factionLid();
 //moonTray();
 
@@ -577,10 +614,12 @@ echo ("Should be 279: ",st + ((rt+4)*5));
 // miscTray();
 //rotate([0,0,45]) miscTray();
 //smallTray(4);
-//cup();
+//cup(halfWidth=40);
+//anotherHexTray();
+//diceTray();
 
 // vpTray(1);
-//worldCardTray2();
+worldCardTray3();
 //structureTray(1,[ ["Research","Station"], ["Supply","Station"], "Spaceport"]);
 //structureTray(1,[ ["Defense","Network"], ["Mining","Station"],"Refinery"]);
 
