@@ -410,8 +410,8 @@ module cup(halfHeight = 25, halfWidth = 25,depth = 35, tabHeight = 5) {
     translate([-1,halfHeight*2 + 10,0]) {
         difference() {
             roundedCube([halfWidth*2 + 2,halfHeight*2 + 2, 3],5);
-            translate([1+eps/2,1+eps/2,0.20+0.28]) 
-                roundedCube([halfWidth*2-eps,halfHeight*2-eps,5],4);
+            translate([1-eps/2,1-eps/2,0.20+0.28]) 
+                roundedCube([halfWidth*2+eps,halfHeight*2+eps,5],4);
         }
     }
     
@@ -644,10 +644,10 @@ echo ("Should be 279: ",st + ((rt+4)*5));
 // miscTray();
 //rotate([0,0,45]) miscTray();
 //smallTray(4);
-//cup(halfWidth=40);
+cup(halfWidth=40);
 //anotherHexTray();
 //diceTray(); // bottom layer
-diceTray(110,96,32); // top layer
+//diceTray(110,96,32); // top layer
 // anotherMiscTray(0);
 // translate([0,90,0]) anotherMiscTray(1);
 // vpTray(1);
