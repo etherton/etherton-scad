@@ -14,6 +14,7 @@ module well(label,yOffset,ySize) {
 
 module tray() {
     labels = [ "Loot", "Teeth", "Cells", "State", "Shield", "Damage", "Player" ];
+    echo(len(labels)*30 + ((len(labels)+1)*wall));
     difference() {
         cube([77,len(labels)*30 + ((len(labels)+1)*wall),20]);
         for (i=[0:len(labels)-1])
@@ -21,7 +22,16 @@ module tray() {
     }
 }
 
-// tray();
+module trayLid() {
+    eps = 0.2;
+    difference() {
+        cube([77+2,216.4+2,3]);
+        translate([1 - eps/2,1 - eps/2,0.2 + 0.28]) cube([77+eps,216.4+eps,99]);
+    }
+}
+
+//tray();
+trayLid();
 
 module purge() {
     difference() {
@@ -34,7 +44,7 @@ module purge() {
     }
 }
 
-purge();
+//purge();
 
 module groupMini() {
     w = (182 - 94 - wall - wall - wall - wall) / 2;
