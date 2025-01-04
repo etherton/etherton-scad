@@ -39,27 +39,32 @@ module tokenTray() {
     difference() {
         cube([217,80,21]);
         for (i=[0:3])
-            translate([0.6,10.6+20*i,12]) rotate([0,90,0]) cylinder(h=51,d=20);
-        translate([0,0,10]) cube([51+0.6*2,99,99]);
+            translate([0.6,10.6+20*i,12]) rotate([0,90,0]) {
+                cylinder(h=51,d=20);
+                translate([0,0,51]) cylinder(h=2,d=17,$fn=4);
+            }
+        translate([0,0,10]) cube([54.4,99,99]);
         
         for (i=[0:2]) {
             for (j=[0:3]) {
                 translate([55+j*26.5+3,0.6+i*26.5+3,-1])
                     cube([20,20,99]);
                 translate([55+j*26.5,0.6+i*26.5,0.6])
-                    cube([26,26,99]);
+                    cube([25.8,25.8,99]);
             }
         }
            
+        x1=18.4;
+        y1=11;
         translate([217,12.5,0]) rotate([0,0,90]) {
-            cylinder2([0,12,0.6]);
-            cylinder2([0+18,12+11,0.6]);
-            cylinder2([0+36,12,0.6]);
-            cylinder2([0+54,12+11,0.6]);
-            cylinder2([0,12+22,0.6]);
-            cylinder2([0+18,12+11+22,0.6]);
-            cylinder2([0+36,12+22,0.6]);
-            cylinder2([0+54,12+11+22,0.6]);
+            cylinder2([0,y1,0.6]);
+            cylinder2([0+x1,y1*2,0.6]);
+            cylinder2([0+x1*2,y1,0.6]);
+            cylinder2([0+x1*3,y1*2,0.6]);
+            cylinder2([0,y1*3,0.6]);
+            cylinder2([0+x1,y1*4,0.6]);
+            cylinder2([0+x1*2,y1*3,0.6]);
+            cylinder2([0+x1*3,y1*4,0.6]);
         }
     }
 }
