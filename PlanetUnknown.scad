@@ -28,8 +28,16 @@ module well(x,y,z,w,h,rad = 3) {
     }
 }
 
-module cornerBox1() {
+module brim() {
+    o = 3;
+    w = 15;
+    translate([-o,-o,0]) cube([w,w,.2]);
+    translate([157-w+o,-o,0]) cube([w,w,.2]);
+    translate([-o,157-w+o,0]) cube([w,w,.2]);
+    translate([157-w+o,157-o,0]) cube([w,w,.2]);
+}
 
+module cornerBox1() {
     difference() {
         roundedCube([157,157,48]);
         //translate([1,1,1]) roundedCube([77,h1,99]);
@@ -55,6 +63,7 @@ module cornerBox1() {
         translate([1,12,23.5]) cube([148,146,16.5]);
         ///translate([-10,79,10]) roundedCube([88,88,99]);
      }
+     brim();
 }
 
 
@@ -78,6 +87,7 @@ module cornerBox2() {
             roundedCube([51-20,77-20,4]);
         }
     }
+    brim();
 }
 
 module cornerBox3() {
@@ -96,6 +106,7 @@ module cornerBox3() {
         linear_extrude(1) polygon([[12,0],[0,1.6],[0,16.5+8],[12,16.5+8]]);
      //translate([79,157-12,23.5]) cube([1,12,16.5+8]);
      //translate([157-12,79,23.5]) cube([12,1,16.5+8]);
+    brim();
 }
 
 module cornerBox4() {
@@ -111,11 +122,14 @@ module cornerBox4() {
         translate([1,12,23.5]) cube([148,146,16.5]);
         ///translate([-10,79,10]) roundedCube([88,88,99]);
      }
+     brim();
 }
 
+/*
 translate([0,0,0]) cornerBox1();
 translate([0,158,0]) cornerBox2();
 translate([-1,157,0]) rotate([0,0,180]) cornerBox3();
 translate([-1,158*2-1,0]) rotate([0,0,180]) cornerBox4();
+*/
 
-//cornerBox4();
+cornerBox4();
