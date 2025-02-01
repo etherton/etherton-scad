@@ -29,12 +29,16 @@ module well(x,y,z,w,h,rad = 3) {
 }
 
 module brim() {
-    o = 3;
-    w = 15;
-    translate([-o,-o,0]) cube([w,w,.2]);
-    translate([157-w+o,-o,0]) cube([w,w,.2]);
-    translate([-o,157-w+o,0]) cube([w,w,.2]);
-    translate([157-w+o,157-o,0]) cube([w,w,.2]);
+    module edge(x,y,r) {
+        translate([x,y,0]) rotate([0,0,r]) translate([-3,-3,0]) {
+            cube([15,5,0.2]);
+            cube([5,15,0.2]);
+        }
+    }
+    edge(0,0,0);
+    edge(157,0,90);
+    edge(157,157,180);
+    edge(0,157,270);
 }
 
 module cornerBox1() {
@@ -132,4 +136,4 @@ translate([-1,157,0]) rotate([0,0,180]) cornerBox3();
 translate([-1,158*2-1,0]) rotate([0,0,180]) cornerBox4();
 */
 
-cornerBox4();
+cornerBox();
