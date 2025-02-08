@@ -28,17 +28,19 @@ module well(x,y,z,w,h,rad = 3) {
     }
 }
 
-module brim() {
+module brim(flag = true) {
     module edge(x,y,r) {
         translate([x,y,0]) rotate([0,0,r]) translate([-3,-3,0]) {
             cube([15,5,0.2]);
             cube([5,15,0.2]);
         }
     }
-    edge(0,0,0);
-    edge(157,0,90);
-    edge(157,157,180);
-    edge(0,157,270);
+    if (flag) {
+        edge(0,0,0);
+        edge(157,0,90);
+        edge(157,157,180);
+        edge(0,157,270);
+    }
 }
 
 module cornerBox1() {
@@ -71,13 +73,16 @@ module cornerBox1() {
 }
 
 
-module cornerBox2() {
+module cornerBox2(alternate) {
     difference() {
         roundedCube([157,157,48]);
         for(r=[0:1]) {
             for (c=[0:2]) {
                 translate([1+c*52,1+r*78,1])
-                roundedCube([51,77,99]);
+                    roundedCube([51,77,99]);
+                if (alternate)
+                    translate([11+c*52,16+r*78,-1])
+                        roundedCube([51-20,77-30,2]);
             }
         }
         translate([0,-1,40]) cube([149,146,50]);
@@ -85,6 +90,7 @@ module cornerBox2() {
         //translate([1.5,1.5,18.5]) roundedCube([154,154,5]);
         //translate([4,4,10]) roundedCube([148,148,8.5]);
      }
+    if (!alternate)
     for(r=[0:1]) {
         for (c=[0:2]) {
             translate([11+c*52,11+r*78,1])
@@ -136,4 +142,4 @@ translate([-1,157,0]) rotate([0,0,180]) cornerBox3();
 translate([-1,158*2-1,0]) rotate([0,0,180]) cornerBox4();
 */
 
-cornerBox();
+cornerBox2(true);
