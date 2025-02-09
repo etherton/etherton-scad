@@ -5,10 +5,16 @@ totalWidth = 140;
 module key(pass,r,c,ltr,conUp,xo = 0,w = 8) {
     x = c * 10 + xo;
     y = -r * 8;
+    co = 1;
     ts = len(ltr)==1 && ltr!="[" && ltr!="]" ? 4 : 3;
     if (pass==0) {
         translate([x,y,0]) difference() {
-            cube([w,6,2.4]);
+            union() {
+                cube([w,6,1]);
+                translate([0,0,1]) linear_extrude(1.4) polygon(
+                    [[co,0],[0,co],[0,6-co],[co,6],
+                     [w-co,6],[w,6-co],[w,co],[w-co,0]]);
+            }
             translate([w/2,5-ts,2])
                 linear_extrude(2)
                     text(ltr,size=ts,halign="center",valign="baseline");
@@ -41,7 +47,7 @@ module keyboard(pass) {
     keyRow(pass,1,"tab","QWERTYUIOP[]\\","");
     keyRow(pass,2,"caps","ASDFGHJKL;'","ret");
     keyRow(pass,3,"shift","ZXCVBNM,./","shift");
-    translate([totalWidth - 6,-20,0]) cube([2,20,fl]);
+    if (pass==0) translate([totalWidth - 6,-20,0]) cube([2,20,fl]);
  }
  
 keyboard(0);
