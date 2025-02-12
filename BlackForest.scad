@@ -52,6 +52,8 @@ module wheelBrace() {
         for (i=[0:3])
             translate([0,3 + i*10,2]) cube([290,2.8,99]);
     }
+    translate([-5,-5,0]) cube([20,49,0.2]);
+    translate([275,-5,0]) cube([20,49,0.2]);
 }
 
 //tileDisplay(2);
