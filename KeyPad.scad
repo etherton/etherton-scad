@@ -4,12 +4,16 @@ totalWidth = 140;
 
 fo = "Liberation Sans:style=bold";
 
-module connectorH(x1,x2,y) {
-    translate([x1,y,0]) cube([x2-x1,2,fl]);
+module connectorH(x,y) {
+    translate([x,y,0]) cube([0.6,0.8,fl]);
+    translate([x+0.2,y,0]) cube([0.6,2,fl]);
+    translate([x+0.4,y+1.2,0]) cube([1,0.8,fl]);
+    translate([x+1.2,y,0]) cube([0.6,2,fl]);
+    translate([x+1.6,y,0]) cube([0.6,0.8,fl]);
 }
 
-module connectorV(x,y1,y2) {
-    translate([x,y1,0]) cube([2,y2-y1,fl]);
+module connectorV(x,y,y) {
+    translate([x+2,y,0]) rotate([0,0,90]) connectorH(0,0);
 }
 
 module key(pass,r,c,ltr,conUp,conRight,xo = 0,w = 8) {
@@ -18,21 +22,25 @@ module key(pass,r,c,ltr,conUp,conRight,xo = 0,w = 8) {
     co = 1;
     ts = len(ltr)==1 && ltr!="[" && ltr!="]" ? 4 : 3;
     if (pass==0) {
-        translate([x,y,0]) difference() {
-            union() {
-                cube([w,6,1]);
-                translate([0,0,1]) linear_extrude(1.4) polygon(
-                    [[co,0],[0,co],[0,6-co],[co,6],
-                     [w-co,6],[w,6-co],[w,co],[w-co,0]]);
+        translate([x,y,0]) {
+            difference() {
+                union() {
+                    cube([w,6,1]);
+                    translate([0,0,1]) linear_extrude(1.4) polygon(
+                        [[co,0],[0,co],[0,6-co],[co,6],
+                        [w-co,6],[w,6-co],[w,co],[w-co,0]]);
+                }
+                translate([w/2,5-ts,2])
+                    linear_extrude(2)
+                        text(ltr,size=ts,halign="center",valign="baseline",font=fo);
+                translate([1,1,0]) cube([w-2,4,1]);
             }
-            translate([w/2,5-ts,2])
-                linear_extrude(2)
-                    text(ltr,size=ts,halign="center",valign="baseline",font=fo);
+            translate([w/2,3,0]) cylinder(r=1,h=1,$fn=30);
         }
         if (conRight)
-            connectorH(x+w,x+w+2,y+2);
+            connectorH(x+w,y+2);
         if (conUp)
-            connectorV(x+2,y+6,y+8);
+            connectorV(x+2,y+6);
     }
     else {
         translate([x+w/2,y+(5-ts),2])
@@ -58,10 +66,10 @@ module keyboard(pass) {
     keyRow(pass,2,"caps","ASDFGHJKL;'","ret");
     keyRow(pass,3,"shift","ZXCVBNM,./","shift");
     if (pass==0) {
-        connectorV(totalWidth-6,-18,-16);
-        connectorV(totalWidth-6,-10,-8);
+        connectorV(totalWidth-6,-18);
+        connectorV(totalWidth-6,-10);
     }
  }
  
-keyboard(0);
-// keyboard(1);
+//keyboard(0);
+keyboard(1);
