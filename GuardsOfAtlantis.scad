@@ -15,18 +15,10 @@ module playerTray(option) {
                     translate([45,-10,50]) rotate([-90,0,0]) cylinder(h=100,r=30,$fn=200);
                 }
                 translate([0,17,0]) difference() {
-                    cube([94,14,20]);
-                    if (true) {
-                        translate([1,1,1]) cube([30,12,20]);
-                        translate([32,1,1]) cube([30,12,20]);
-                        translate([63,1,1]) cube([30,12,20]);
-                   }
-                    else {
-                        translate([1,1,1]) cube([22,12,20]);
-                        translate([24,1,1]) cube([22,12,20]);
-                        translate([47,1,1]) cube([22,12,20]);
-                        translate([70,1,1]) cube([23,12,20]);
-                    }
+                    cube([94,13.5,20]);
+                    translate([1,1,1]) cube([30,11.5,20]);
+                    translate([32,1,1]) cube([30,11.5,20]);
+                    translate([63,1,1]) cube([30,11.5,20]);
                 }
             }
             translate([94/2-T,0,0]) cube([T+T,17,1]);
@@ -36,7 +28,7 @@ module playerTray(option) {
     if (option <= 1) {
         translate([113,16,0]) difference() {
             union() {
-                translate([-20,-12,0]) cube([20,23,4]);
+                translate([-20,-12,0]) cube([20,24,4]);
                 cylinder(h=4,d=30,$fn=100);
             }
             translate([0,0,1]) cylinder(h=3.2,d1=27,d2=26.2,$fn=100);
@@ -45,7 +37,7 @@ module playerTray(option) {
         if (option == 1) {
             translate([113,44,0]) difference() {
                 union() {
-                    translate([-20,-12,0]) cube([20,23,4]);
+                    translate([-20,-12,0]) cube([20,24,4]);
                     cylinder(h=4,d=30,$fn=100);
                 }
                 translate([0,0,1]) cylinder(h=3.2,d1=27,d2=26.2,$fn=100);
@@ -101,6 +93,7 @@ module minionTray() {
 }
 
 //rotate([43,0,0]) 
-//scale([-1,1,1]) playerTray(0);
-minionTray();
+//scale([-1,1,1]) 
+playerTray(1);
+//minionTray();
 //cardTray(9,16);
