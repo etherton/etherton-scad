@@ -335,7 +335,61 @@ module playerTokensCard() {
     }
 }
 
-playerTokensCard();
+// playerTokens();
+
+module playerTokensNL() {
+    rad=10;
+    module roundedCube(vec) {
+        hull() {
+            translate([rad,rad,0]) cylinder(h=vec.z,r=rad);
+            translate([rad,vec.y-rad,0]) cylinder(h=vec.z,r=rad);
+            translate([vec.x-rad,vec.y-rad,0]) cylinder(h=vec.z,r=rad);
+            translate([vec.x-rad,rad,0]) cylinder(h=vec.z,r=rad);
+        }
+    }
+    difference() {
+        roundedCube([160,128,2.6]);
+        cx = 26.4;
+        cy = 27;
+        ix = 0.6;
+        iy = 1.4;
+        td = 25.9;
+        for (j=[0:0]) {
+            for (i=[0:4]) {
+                translate([ix+i*cx + cx,j*cy*1.8+cy/2 + iy,-1]) {
+                    cylinder(h=1.6,d=20);
+                    translate([0,0,1.6]) cylinder(h=5,d=td);
+                }
+            }
+        }
+        for (j=[0:0]) {
+            for (i=[0:5]) {
+                translate([ix+i*cx + cx/2,cy*1.4+j*cy*1.8 + iy,-1]) {
+                    cylinder(h=1.6,d=20);
+                    translate([0,0,1.6]) cylinder(h=5,d=td);
+                }
+            }
+        }
+        for (i=[0:5]) {
+            translate([12 + 23*i,53,-1]) {
+                translate([2,2,0]) cube(16);
+                translate([0,0,1.6]) cube(20);
+            }
+        }
+        for (j=[0:1]) {
+            for (i=[0:4]) {
+                translate([11+28*i,73.8+26.6*j,-1]) {
+                    translate([2,2,0]) cube(21.4);
+                    translate([0,0,1.6]) cube(25.4);
+                }
+            
+            }
+        }
+    }
+}
+
+
+playerTokensNL();
 
 module tokenTray3() {
     rad=3;
