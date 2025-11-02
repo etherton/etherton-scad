@@ -362,47 +362,54 @@ module roundedCube(vec,rad=2) {
 	}
 }
 
-module factionTray(list,depth,ncols,margin=5,fbm=2) {
+module factionTray(lists,depth,ncols,margin=6,fbm=1) {
 	counterThick = 1.9;
 	counterWidth = 16.6;
-	wellSep = 4;
+	wellSep = 3.4;
     fbm2 = fbm + fbm;
     colSize = depth - fbm2;
 	width = ncols * (counterWidth+margin) + 2;
-    // echo(width);
+    echo(width);
 	function computeWell(list,index) = list[index].y * counterThick + 0.2;
-	/* function computeOffset(list,index) = index? 
+	function computeOffset(list,index) = index? 
         computeOffset(list,index-1) + computeWell(list,index-1) + wellSep : 0;
-    function computeSize(list,index) = computeOffset(list,index) + computeWell(list,index); */
-    function rowOf(list,index) = index? 
-        (rowOf(list,index-1) + computeWell(list,index-1) + wellSep + computeWell(list,index)
-            <= colSize? rowOf(list,index-1) + computeWell(list,index-1) + wellSep : 0) : 0;
-    function columnOf(list,index) = index? (rowOf(list,index-1) > rowOf(list,index)
-                ? columnOf(list,index-1) + 1 
-                : columnOf(list,index-1)) : 0;
-        
+    function computeSize(list,index) = computeOffset(list,index) + computeWell(list,index);
+       
+    baseThick = 5;//10; 
 	difference() {
-		roundedCube([width,depth,10]);
-		for (i=[0:len(list)-1]) {
-            translate([columnOf(list,i) * (margin+counterWidth) + margin,
-                    rowOf(list,i) + fbm,floorDepth]) {
-                cube([counterWidth,computeWell(list,i),99]);
-                rotate([0,0,+90]) translate([0,0,10-floorDepth-0.4])
-                    linear_extrude(0.4) 
-                        text(text=list[i].x,size=margin-1,halign="left",valign="bottom");
+		roundedCube([width,depth,baseThick]);
+		for (column=[0:len(lists)-1]) {
+            translate([column * (margin+counterWidth) + margin,fbm,0]) {
+                colList = lists[column];
+                for (row=[0:len(colList)-1]) {
+                    translate([0,computeOffset(colList,row),floorDepth]) {
+                        cube([counterWidth,computeWell(colList,row),99]);
+                        translate([-1,computeWell(colList,row)/2,baseThick-floorDepth-0.4])
+                            rotate([0,0,90]) 
+                                linear_extrude(0.4) 
+                                    text(colList[row].x,margin-2,halign="center",valign="bottom");
+                    }
+                }
             }
 		}
 	}
 }
 
 BasicTray = [ 
-	[["SC",7], ["DD",6],["CA",6], ["BC",6], ["BB",6], ["DN",5], ["TN",6],
-	["Bas",4], ["SB",2], ["DS",4],
-	["Dec",4], ["Uni",6],
-	["SY",7], ["T",6],
-	["Inf",10], ["Mar",8], ["HI",10], ["Gra",6], ["CY",3],
-	["BD",6], ["R",6], ["CV",6], ["BV",6], ["F",10], ["Min",9]];
+	[["SC",7],["DD",6],["CA",6],["BC",6],["BB",6],["DN",5],["Titan",6]],
+	[["Bas",4],["SB",2],["DS",4],["Dec",4],["Uni",6],["SW",6],["SY",7],["Fla",2],["LOG",6]],
+    [["T",6],["Inf",10],["Mar",8],["HI",10],["Gra",6],["CY",3]],
+	[["BD",6],["R",6],["CV",6],["BV",6],["F",10],["Mines",9]]];
+    
+AltTray = [
+	[["SC",7],["DD",6],["CA",6],["BC",6],["BB",6],["DN",6],["Ti",1]],
+	[["Bas",4],["SB",2],["DS",4],["Dec",4],["Uni",6],["SW",6],["SY",7],["Fla",2],["LOG",6]],
+    [["T",6],["Inf",10],["Mar",8],["HI",10],["Gra",6],["CY",3]],
+	[["MB",6],["Missile",6],["R",6],["BV",6],["F",10],["Mines",9]]];
 
 //        ["CO",8,4],    ["MS",7,4], ["Mnr",4], ["MX",4],
 
-factionTray(BasicTray,110,5);
+// total space for six is 216x293
+factionTray(BasicTray,218/2,4);
+
+// translate([100,0,0]) factionTray(AltTray,218/2,4);
