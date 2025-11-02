@@ -18,6 +18,12 @@ module SideTray(tray=2) {
         [-inset,pY * 4 + inset], [-2*pX,pY * 4 + inset], [-3*pX,pY*5],
         [w, pY * 5], [w, 0]]);
     }
+    module topRightExp() {
+       polygon([
+        [-2*pX,0], [-3*pX,pY], [-2*pX,pY * 2], [-3*pX, pY * 3],
+        [/*-inset*/-2*pX,pY * 4 + inset], [-2*pX,pY * 4 + inset], [-3*pX,pY*5],
+        [w, pY * 5], [w, 0]]);
+    }
     gutter = 18;
     module bottomRight() {
         polygon([
@@ -39,10 +45,10 @@ module SideTray(tray=2) {
         [pX*12,pY*3],[pX*13,pY*4],[0,pY*4]]);
     }
     if (tray==0) difference() {
-        linear_extrude(trayDepth) topRight();
+        linear_extrude(trayDepth) topRightExp();
         translate([0,0,floorDepth]) 
             linear_extrude(trayDepth) 
-                offset(delta=-inset) topRight();
+                offset(delta=-inset) topRightExp();
     }
     else if (tray==1) union() {
         difference() {
@@ -303,7 +309,7 @@ module cardtray2() {
 // hexgrid(4,3,true,true);
 // hexgrid(4,3,true,true,false);
 
-hexgrid(4,3,true,true,true); // upper tray
+//hexgrid(4,3,true,true,true); // upper tray
 // hexgrid(4,3,true,true,false); // lower tray
 
 //translate([130,280,0]) rotate([0,0,180]) hexgrid(4,3,true,true);
@@ -345,4 +351,58 @@ if (false) divider(["0","II","IV","V","VII","IX","XI", "XIII", "XV",
 
 //cardtray2();
 
-            
+//SideTray(0);
+
+module roundedCube(vec,rad=2) {
+	hull() {
+		translate([rad/2,rad/2,0]) cylinder(r=rad,h=vec.z);
+		translate([rad/2,vec.y-rad/2,0]) cylinder(r=rad,h=vec.z);
+		translate([vec.x-rad/2,vec.y-rad/2,0]) cylinder(r=rad,h=vec.z);
+		translate([vec.x-rad/2,rad/2,0]) cylinder(r=rad,h=vec.z);
+	}
+}
+
+module factionTray(list,depth,ncols,margin=5,fbm=2) {
+	counterThick = 1.9;
+	counterWidth = 16.6;
+	wellSep = 4;
+    fbm2 = fbm + fbm;
+    colSize = depth - fbm2;
+	width = ncols * (counterWidth+margin) + 2;
+    // echo(width);
+	function computeWell(list,index) = list[index].y * counterThick + 0.2;
+	/* function computeOffset(list,index) = index? 
+        computeOffset(list,index-1) + computeWell(list,index-1) + wellSep : 0;
+    function computeSize(list,index) = computeOffset(list,index) + computeWell(list,index); */
+    function rowOf(list,index) = index? 
+        (rowOf(list,index-1) + computeWell(list,index-1) + wellSep + computeWell(list,index)
+            <= colSize? rowOf(list,index-1) + computeWell(list,index-1) + wellSep : 0) : 0;
+    function columnOf(list,index) = index? (rowOf(list,index-1) > rowOf(list,index)
+                ? columnOf(list,index-1) + 1 
+                : columnOf(list,index-1)) : 0;
+        
+	difference() {
+		roundedCube([width,depth,10]);
+		for (i=[0:len(list)-1]) {
+            translate([columnOf(list,i) * (margin+counterWidth) + margin,
+                    rowOf(list,i) + fbm,floorDepth]) {
+                cube([counterWidth,computeWell(list,i),99]);
+                rotate([0,0,+90]) translate([0,0,10-floorDepth-0.4])
+                    linear_extrude(0.4) 
+                        text(text=list[i].x,size=margin-1,halign="left",valign="bottom");
+            }
+		}
+	}
+}
+
+BasicTray = [ 
+	[["SC",7], ["DD",6],["CA",6], ["BC",6], ["BB",6], ["DN",5], ["TN",6],
+	["Bas",4], ["SB",2], ["DS",4],
+	["Dec",4], ["Uni",6],
+	["SY",7], ["T",6],
+	["Inf",10], ["Mar",8], ["HI",10], ["Gra",6], ["CY",3],
+	["BD",6], ["R",6], ["CV",6], ["BV",6], ["F",10], ["Min",9]];
+
+//        ["CO",8,4],    ["MS",7,4], ["Mnr",4], ["MX",4],
+
+factionTray(BasicTray,110,5);
