@@ -427,6 +427,8 @@ module factionTray(doLabel,lists,depth,margin=6,fbm=0.6) {
 }
 
 module lid(width=92.4,depth=108) {
+    width = width + 0.4;
+    depth = depth + 0.4;
     inset = 0.8;
     major = max(width,depth) * 0.75;
     difference() {
@@ -461,10 +463,10 @@ BasicTray = [
 	[["BD",6],["R",6],["CV",6],["BV",6],["F",10],["MINES",9]]
     ];
 BasicTrayEx = [
-    [["CS",16],["Miner",8],["Fleet",7]],
-    [["MSP",28],["Misc",4]],
-    [["Res/Ind",16],["Lo/Tem",10],["Hom",3]],
-    [["Var",8],["SYS",25]]
+    [["CS",16],["MINER",8],["FLT",7]],
+    [["MSP",28],["MSC",4]],
+    [["R/I",16],["L/T",10],["HOM",3]],
+    [["VAR",8],["SYS",25]]
     ];
     
     
@@ -486,8 +488,8 @@ ReplicatorsTray = [
 //        ["CO",8,4],    ["MS",7,4], ["Mnr",4], ["MX",4],
 
 // total space for six is 216x293
-factionTray(false,BasicTray,108);
-//lid(92.4,108);
+//factionTray(true,BasicTray,108);
+lid(92.4,108);
 
 // extended tray is 293 across but only 148 of 216. leaves 168 x 293 for ???
 //factionTray(true,BasicTrayEx,75);
