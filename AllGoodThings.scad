@@ -368,7 +368,7 @@ shearYZ = 0.3;
        [ 0  , 0  , 1  , 0   ],
        [ 0  , 0  , 0  , 1   ] ] ;
        
-module factionTray(doLabel,lists,depth,margin=6,fbm=0.6) {
+module factionTray(doLabel,lists,depth,margin=6,fbm=0.6,xs=2) {
     ncols = len(lists);
 	counterThick = 2;
 	counterWidth = 16.6;
@@ -377,9 +377,10 @@ module factionTray(doLabel,lists,depth,margin=6,fbm=0.6) {
     colSize = depth - fbm2;
 	width = ncols * (counterWidth+margin) + 2;
     echo(width);
-	function computeWell(list,index) = list[index].y * counterThick + 0.4;
+	function computeWell(list,index) = abs(list[index].y) * counterThick + 0.4;
 	function computeOffset(list,index) = index? 
-        computeOffset(list,index-1) + computeWell(list,index-1) + wellSep : 0;
+        computeOffset(list,index-1) + computeWell(list,index-1) + 
+            (wellSep + (list[index].y<0? xs : 0)) : 0;
     function computeSize(list,index) = computeOffset(list,index) + computeWell(list,index);
        
     baseThick = 10; 
@@ -427,8 +428,8 @@ module factionTray(doLabel,lists,depth,margin=6,fbm=0.6) {
 }
 
 module lid(width=92.4,depth=108) {
-    width = width + 0.4;
-    depth = depth + 0.4;
+    //width = width + 0.1;
+    //depth = depth + 0.1;
     inset = 0.8;
     major = max(width,depth) * 0.75;
     difference() {
@@ -436,12 +437,12 @@ module lid(width=92.4,depth=108) {
         translate([inset,inset,0]) roundedCube([width-inset*2,depth-inset*2,16]);
     }
     difference() {
-        roundedCube([width,depth,0.6]);
-        translate([width/2,depth/2,0])
+        roundedCube([width,depth,0.4]);
+        /*translate([width/2,depth/2,0])
             rotate([0,0,45])
                 for (i=[-major:10:major])
                     for (j=[-major:10:major])
-                        translate([i,j,0]) cube([7,7,0.6]);
+                        translate([i,j,0]) cube([7,7,0.6]); */
     }
 }
 
@@ -454,6 +455,20 @@ module verticalCardTray() {
     }
 }
 
+module bigCardTray() {
+    difference() {
+        roundedCube([143,193,35],2);
+        for (i=[0:1])
+            for (j=[0:1])
+                translate([1+i*71,1+j*96,0.6]) { 
+                    roundedCube([70,95,99]);
+                    if (i==0||j==1)
+                        translate([15,15,-1]) cube([40,65,10]);
+                }
+         translate([(143-110)-5,5,35-3])
+            cube([110,142,3]);
+    }
+}
 //verticalCardTray();
 
 BasicTray = [ 
@@ -471,10 +486,16 @@ BasicTrayEx = [
     
     
 AltTray = [
-	[["SC",7],["DD",6],["CA",6],["BC",6],["BB",6],["DN",6],["Ti",1]],
-	[["Bas",4],["SB",2],["DS",4],["Dec",4],["Uni",6],["SW",6],["SY",7],["Fla",2],["LOG",6]],
-    [["T",6],["Inf",10],["Mar",8],["HI",10],["Gra",6],["CY",3]],
-	[["MB",6],["Missile",6],["R",6],["BV",6],["F",10],["Mines",9]]];
+	[["SC",7],["DD",6],["CA",6],["BC",6],["BB",6],["DN",6],["TN",1]],
+	[["BA",4],["SB",2],["DS",4],["DE",4],["UN",6],["SW",6],["SY",7],["FL",2],["LO",5]],
+    [["T",6],["INF",10],["MAR",10],["HI",10],["GRA",6],["CY",3]],
+	[["MB",6],["MSL",6],["R",6],["F",10],["MINES",9]]];
+AltTrayEx = [
+    [["CS",17],["MINER",8],["FLT",5]],
+    [["MSP",24],["MSC",4]],
+    [["R/I",16],["L/T",10],["HOM",2]],
+    [["VAR",8],["SYS",25]]
+    ];
     
 ReplicatorsTray = [
     [["0",15], ["II",15],["Fl",1]],
@@ -485,17 +506,28 @@ ReplicatorsTray = [
     [["SYS",25],["ALPHA",1]]
 ];
 
+LeftoversTray = [
+    [["OOS",8],["CH",3],["MISS",12],["AST",4]],
+    [["JED",5],["ABLTY",12],["EN",3],["HERO",8]],
+    [["MY",-3],["HI",-3],["HAL",-3],["RM",-3],["WP",-3],["DA",-3]],
+    [["SK",-3],["KW",-3],["SM",-3],["AS",-3],["AL",-3],["SN",-3]],
+    [["",5],["",5],["",4],["",4],["",4],["",4]],
+    [["",5],["",5],["",4],["",4],["",4],["",4]]
+];
+
 //        ["CO",8,4],    ["MS",7,4], ["Mnr",4], ["MX",4],
 
 // total space for six is 216x293
 //factionTray(true,BasicTray,108);
-lid(92.4,108);
+//lid(92.4,108);
+//bigCardTray();
 
 // extended tray is 293 across but only 148 of 216. leaves 168 x 293 for ???
 //factionTray(true,BasicTrayEx,75);
 //lid(92.4,75);
 //factionTray(true,ReplicatorsTray,75);
 //lid(137.6,75);
+factionTray(false,LeftoversTray,75,xs=3);
 
 // translate([100,0,0]) 
 //factionTray(AltTray,218/2,4);
