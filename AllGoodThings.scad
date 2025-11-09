@@ -161,107 +161,9 @@ module hexgrid(nc,nr,bottomCutout,halfRow,hack) {
 
 chitSize = 16.6;
 
-module playerTray(trayWidth, trayHeight, numLanes, offs, doTray, doLid) {
-    // 140mm x 92mm is one quarter the folded game board
-    // trayWidth = 190;
-    // trayHeight = 100;
-    // numLanes = 9;
-    gutter = (trayWidth - (chitSize * numLanes)) / (numLanes+1);
-    // echo (gutter);
-    chitThickness = 1.9;
-    step = chitThickness * 1.5;
-    sepDepth = 1;
-    shearYZ = 0.7;
-
-    module lane(col) {
-        size = trayHeight - gutter - gutter;
-        M = [ [ 1  , 0  , 0  , 0   ],
-              [ 0  , 1  , shearYZ, 0   ],
-              [ 0  , 0  , 1  , 0   ],
-              [ 0  , 0  , 0  , 1   ] ] ;
-        translate([col * (chitSize + gutter) + gutter,gutter,floorDepth]) {
-            cube([chitSize,size,chitSize]);
-            /* for (n=[step:step:size-step]) {
-                translate([0,n,-0.2]) {
-                    cube([chitSize,.4,chitSize]);
-                }
-            } */
-            for (n=[step:step:size-step*2]) {
-                translate([-sepDepth,n+offs,1]) {
-                    multmatrix(M) {
-                        cube([chitSize + sepDepth*2,chitThickness/2,chitSize]);
-                    }
-                }
-            }
-        }
-    }
-
-    trayDepth = chitSize * 0.5 + floorDepth;
-    lidInset = .8;
-    lidInset2 = 1.8;
-    lidOverlap = 5;
-    gridStep = 10;
-    gridSize = 7;
-    if (doTray) difference() {
-        cube([trayWidth,trayHeight,trayDepth]);
-        for (l=[0:numLanes-1])
-            lane(l);
-        translate([0,0,trayDepth-lidOverlap]) 
-            cube([lidInset,trayHeight,lidOverlap]);
-        translate([0,0,trayDepth-lidOverlap]) 
-            cube([trayWidth,lidInset,lidOverlap]);
-        translate([0,trayHeight-lidInset,trayDepth-lidOverlap]) 
-            cube([trayWidth,lidInset,lidOverlap]);
-        translate([trayWidth-lidInset,0,trayDepth-lidOverlap]) 
-            cube([lidInset,trayHeight,lidOverlap]);
-    }
-    
-    // lid
-    if (doLid) {
-        lidDepth = lidOverlap + 6;
-        lidInset3 = lidInset - 0.10; // Don't make the lid too tight
-        translate([0,doTray? trayHeight + 10 : 0,0]) {
-            difference() {
-                cube([trayWidth,trayHeight,lidDepth]);
-                translate([lidInset2,lidInset2,floorDepth])            
-                    cube([trayWidth-lidInset2*2,trayHeight-lidInset2*2,lidDepth]);
-                translate([lidInset3,lidInset3,6.5])
-                    cube([trayWidth-lidInset3*2,trayHeight-lidInset3*2,lidOverlap]);
-                /* translate([gutter,gutter,0]) intersection() {
-                    cube([trayWidth - gutter*2,trayHeight-gutter*2,floorDepth]);
-                    rotate([0,0,45]) 
-                        for (i=[-trayWidth*2:gridStep:trayWidth*2])
-                            for (j=[-trayHeight*2:gridStep:trayHeight*2])
-                                translate([i,j,-floorDepth]) 
-                                    cube([gridSize,gridSize,floorDepth*2]);
-                }  */      
-            }
-         }
-    }
-}
 
 
 
-
-module divider(list) {
-    cols = ceil(sqrt(len(list)));
-    sizesByLength = [ 7, 5, 5, 4.5, 4.2, 3.8, 3.7 ];
-    for (i=[0:len(list)-1]) {
-        translate([(i % cols) * chitSize * 1.5,floor(i / cols) * chitSize,0]) {
-            difference() {
-                union() {
-                    cube([chitSize + 1.4,12.0,0.6]);
-                    translate([1.2/2,2,0.6]) cube([chitSize,8,1.4]);
-                }
-                translate([(chitSize + 1.2)/2,6,-1]) scale([-1,1,1]) linear_extrude(1.6) {
-                    text(text=list[i],size=sizesByLength[len(list[i])],
-                    font="Liberation Serif:style=Bold",
-                    halign="center",valign="center");
-                }
-            }
-         }
-    }
-}
 
 module cardtray() {
     cardWidth = 65;
@@ -303,55 +205,7 @@ module cardtray2() {
     }
 }
 
-/////hexgrid(4,3,true,false);
 
-// Remastered hex grid, deeper, ten wells
-// hexgrid(4,3,true,true);
-// hexgrid(4,3,true,true,false);
-
-//hexgrid(4,3,true,true,true); // upper tray
-// hexgrid(4,3,true,true,false); // lower tray
-
-//translate([130,280,0]) rotate([0,0,180]) hexgrid(4,3,true,true);
-//if (false) playerTray(false,true);
-// big tray
-// playerTray(190,100,9,1,true,false);
-
-// special replicators tray
-// playerTray(218,50,11,0,false,true);
-//  current best tray
-//playerTray(140,109,7,-1.2,false,true);
-
-// new AGT player tray
-//playerTray(218,92,11,-0.8,true,false);
-
-// even smaller ships only
-//playerTray(100,95,5,0,true,false);
-
-if (false) divider(
-    ["Base","BB","BC","BD","BV","CA", 
-     "CS","CV","DD","Decoy","DN","F",
-     "MSP","Mines","R","SC","SW","SY",
-     "T","Titan","Uniq","Flag","Miner","Grav",
-     "HI","Inf","Mar","Res","Home","Fleet",
-     "DS","SB","Cy","Sup","Temp","MB"]);
-
-if (false) divider(["0","II","IV","V","VII","IX","XI", "XIII", "XV",
-   "Flag","Exp","Scan","SW","PD","Home","Colony","Fleet"]);
-
-// translate([0,80,0])
-// Replicators
-
-
-//divider2();
-
-//SideTray(4);
-// rotate([0,0,45]) 
-//NumbersTray();
-
-//cardtray2();
-
-//SideTray(0);
 
 module roundedCube(vec,rad=2) {
 	hull() {
@@ -455,6 +309,18 @@ module verticalCardTray() {
     }
 }
 
+module sidewaysCardTray() {
+    difference() {
+        cube([92*2+3,14.6,68]);
+        translate([1,0.8,0.6]) cube([92,13,99]);
+        translate([94,0.8,0.6]) cube([92,13,99]);
+        translate([1+(92/2),0,68])
+            rotate([90,0,0]) cylinder(99,d=40,center=true);
+        translate([94+(92/2),0,68])
+            rotate([90,0,0]) cylinder(99,d=40,center=true);
+    }
+}
+
 module bigCardTray() {
     difference() {
         roundedCube([143,193,35],2);
@@ -486,10 +352,10 @@ BasicTrayEx = [
     
     
 AltTray = [
-	[["SC",7],["DD",6],["CA",6],["BC",6],["BB",6],["DN",6],["TN",1]],
-	[["BA",4],["SB",2],["DS",4],["DE",4],["UN",6],["SW",6],["SY",7],["FL",2],["LO",5]],
-    [["T",6],["INF",10],["MAR",10],["HI",10],["GRA",6],["CY",3]],
-	[["MB",6],["MSL",6],["R",6],["F",10],["MINES",9]]];
+	[["SC",7],["DD",6],["CA",6],["BC",6],["BB",6],["DN",6],["FL",2]],
+	[["BA",4],["SB",2],["DS",4],["DE",4],["UN",6],["SW",6],["SY",7],["T",6]],
+    [["INF",10],["MAR",10],["HI",10],["GRA",6],["CY",3],["TN",-1]],
+	[["MB",6],["MSL",6],["R",6],["F",10],["MINES",9],["LO",5]]];
 AltTrayEx = [
     [["CS",17],["MINER",8],["FLT",5]],
     [["MSP",24],["MSC",4]],
@@ -507,8 +373,8 @@ ReplicatorsTray = [
 ];
 
 LeftoversTray = [
-    [["OOS",8],["CH",3],["MISS",12],["AST",4]],
-    [["JED",5],["ABLTY",12],["EN",3],["HERO",8]],
+    [["OOS",8],["CH",3],["MISS",13],["AST",4]],
+    [["JED",5],["ABLTY",12],["HERO",8]],
     [["MY",-3],["HI",-3],["HAL",-3],["RM",-3],["WP",-3],["DA",-3]],
     [["SK",-3],["KW",-3],["SM",-3],["AS",-3],["AL",-3],["SN",-3]],
     [["",5],["",5],["",4],["",4],["",4],["",4]],
@@ -516,6 +382,10 @@ LeftoversTray = [
 ];
 
 //        ["CO",8,4],    ["MS",7,4], ["Mnr",4], ["MX",4],
+
+
+//hexgrid(4,3,true,true,true); // upper tray
+// hexgrid(4,3,true,true,false); // lower tray
 
 // total space for six is 216x293
 //factionTray(true,BasicTray,108);
@@ -527,7 +397,13 @@ LeftoversTray = [
 //lid(92.4,75);
 //factionTray(true,ReplicatorsTray,75);
 //lid(137.6,75);
-factionTray(false,LeftoversTray,75,xs=3);
+//factionTray(true,LeftoversTray,75,xs=3);
 
 // translate([100,0,0]) 
-//factionTray(AltTray,218/2,4);
+//factionTray(false,AltTray,108);
+//factionTray(true,AltTrayEx,75);
+
+//SideTray(5);
+//NumbersTray();
+
+sidewaysCardTray();
