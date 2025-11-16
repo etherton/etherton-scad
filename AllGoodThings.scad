@@ -247,7 +247,7 @@ module factionTray(doLabel,lists,depth,margin=6,fbm=0.6,xs=2) {
                         translate([-0.4,2.4+computeWell(colList,row)/2,baseThick-floorDepth-0.4])
                             rotate([0,0,90]) 
                                 linear_extrude(0.4) 
-                                    text(colList[row].x,margin-1.6,halign="center",valign="bottom");
+                                    text(colList[row].x,margin-1.6,halign="center",valign="baseline");
                     }
                 }
             }
@@ -271,7 +271,7 @@ module factionTray(doLabel,lists,depth,margin=6,fbm=0.6,xs=2) {
                         translate([-0.4,2.4+computeWell(colList,row)/2,baseThick-floorDepth-0.4])
                             rotate([0,0,90]) 
                                 linear_extrude(0.4) 
-                                    text(colList[row].x,margin-1.6,halign="center",valign="bottom");
+                                    text(colList[row].x,margin-1.6,halign="center",valign="baseline");
                         for (nib=[computeWell(colList,row)-4:-4:4])
                             translate([0,nib,-0.2]) cube([counterWidth,1,1]);
                     }
@@ -364,21 +364,22 @@ AltTrayEx = [
     ];
     
 ReplicatorsTray = [
-    [["0",15], ["II",15],["Fl",1]],
+    [["0",15], ["II",15], ["FL",1]],
     [["IV",15], ["V",8], ["VII",8]],
     [["IX",15], ["XI",8], ["XIII",6]],
-    [["XV",6], ["Fleet",5], ["Scan",6], ["PD",12]],
-    [["SW",7], ["EXP",6],["Col",12],["KEY",1]],
+    [["XV",6], ["FLT",5], ["SCN",6], ["PD",12]],
+    [["SW",7], ["EXP",6],["COL",12],["KEY",1]],
     [["SYS",25],["ALPHA",1]]
 ];
 
 LeftoversTray = [
-    [["OOS",8],["CH",3],["MISS",13],["AST",4]],
-    [["JED",5],["ABLTY",12],["HERO",8]],
+    [["OOS",8],["CH",3],["C/M",8],["MSN",6],["DI",2]],
+    [["JED",5],["ABLTY",12],["AST",4],["HERO",8]],
+    [["DMG",8],["MA",-3],["MI",-3],["D",-1],["I",-1],["C",-1]],
     [["MY",-3],["HI",-3],["HAL",-3],["RM",-3],["WP",-3],["DA",-3]],
-    [["SK",-3],["KW",-3],["SM",-3],["AS",-3],["AL",-3],["SN",-3]],
+    [["SK",-3],["QU",-3],["SM",-3],["AS",-3],["AL",-3],["SN",-3]],
     [["",5],["",5],["",4],["",4],["",4],["",4]],
-    [["",5],["",5],["",4],["",4],["",4],["",4]]
+//    [["",5],["",5],["",4],["",4],["",4],["",4]]
 ];
 
 //        ["CO",8,4],    ["MS",7,4], ["Mnr",4], ["MX",4],
@@ -395,7 +396,7 @@ LeftoversTray = [
 // extended tray is 293 across but only 148 of 216. leaves 168 x 293 for ???
 //factionTray(true,BasicTrayEx,75);
 //lid(92.4,75);
-//factionTray(true,ReplicatorsTray,75);
+factionTray(true,ReplicatorsTray,75);
 //lid(137.6,75);
 //factionTray(true,LeftoversTray,75,xs=3);
 
@@ -406,4 +407,4 @@ LeftoversTray = [
 //SideTray(5);
 //NumbersTray();
 
-sidewaysCardTray();
+//sidewaysCardTray();
