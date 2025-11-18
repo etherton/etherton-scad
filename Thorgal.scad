@@ -77,7 +77,36 @@ module polyTray() {
     }
 }
 
-polyTray();
+module tokenTray() {
+    counterThick = 1.8;
+    wellSep = 4;
+    c = 180;
+    height = 10.6;
+	function computeWell(list,index) = list[index].z * counterThick + 0.4;
+	function computeOffset(list,index) = index? 
+        computeOffset(list,index-1) + computeWell(list,index-1) + wellSep : 0;
+    function computeSize(list,index) = computeOffset(list,index) + computeWell(list,index);
+
+    module stack(x,list) {
+        for (i=[0:len(list)-1])
+            translate([x,1 + computeOffset(list,i),height])
+                rotate([-90,0,0]) cylinder(d=list[i].x,h=computeWell(list,i),$fn=list[i].y);
+    }
+// 1.85mm thick cardboard
+    difference() {
+        cube([100,97,height]);
+        stack(12,[[19,4,12],[19,4,12],[19,4,12],[19,4,6]]);
+        stack(32,[[19,4,9],[18,c,3],[18,c,3],[18,c,3],[18,c,3],[18,8,6],[19,4,9]]);
+        stack(54,[[20,c,18],[20,c,15]]);
+        stack(76,[[20,c,7],[20,c,7],[20,c,7]]);
+        for (i=[0:3]) translate([87.5,1 + 15 * i,6]) cube(11.4);
+        translate([51,68,0.6]) cube([38,counterThick*9+0.4,99]);
+        translate([47,88,0.6]) cube([47,counterThick+0.4,99]);
+    }
+}
+
+//polyTray();
+tokenTray();
 
 /*difference() {
     cube([100+1.6,97+1.6,5]);
